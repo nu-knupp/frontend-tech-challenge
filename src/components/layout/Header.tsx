@@ -1,8 +1,16 @@
 "use client";
 
-import { AppBar, Toolbar, Typography } from "@mui/material";
+import { AppBar, Toolbar, Typography, IconButton, Box, useTheme, useMediaQuery } from "@mui/material";
+import MenuIcon from "@mui/icons-material/Menu";
 
-export default function Header() {
+interface HeaderProps {
+  onDrawerToggle: () => void;
+}
+
+export default function Header({ onDrawerToggle }: HeaderProps) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
   return (
     <AppBar
       position="fixed"
@@ -13,10 +21,23 @@ export default function Header() {
         backgroundColor: "#ffffff",
       }}
     >
-      <Toolbar>
-        <Typography variant="h6" noWrap component="div">
-          Banco Simples
-        </Typography>
+      <Toolbar sx={{ justifyContent: "space-between" }}>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
+          {isMobile && (
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="menu"
+              sx={{ mr: 2 }}
+              onClick={onDrawerToggle}
+            >
+              <MenuIcon />
+            </IconButton>
+          )}
+          <Typography variant="h6" noWrap component="div">
+            Banco Simples
+          </Typography>
+        </Box>
       </Toolbar>
     </AppBar>
   );

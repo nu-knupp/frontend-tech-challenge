@@ -19,26 +19,37 @@ export default function Home() {
           height: "100%",
           overflowY: "auto",
           boxSizing: "border-box",
-          padding: 3,
+          padding: { xs: 2, sm: 3 },
         }}
       >
         <Box
           sx={{
             display: "flex",
+            flexDirection: { xs: "column", md: "row" },
             gap: 3,
-            flexWrap: "nowrap",
             alignItems: "stretch",
             maxWidth: "1200px",
             width: "100%",
           }}
         >
           <Box
-            sx={{ flex: 3, display: "flex", flexDirection: "column", gap: 3 }}
+            sx={{ 
+              flex: { md: 3 }, 
+              display: "flex", 
+              flexDirection: "column", 
+              gap: 3,
+              width: "100%" 
+            }}
           >
             <BalanceCard />
             <NewTransactionForm onAdd={() => setReload((prev) => prev + 1)} />
           </Box>
-          <Box sx={{ flex: 2, display: "flex", flexDirection: "column" }}>
+          <Box sx={{ 
+            flex: { md: 2 }, 
+            display: "flex", 
+            flexDirection: "column",
+            width: "100%" 
+          }}>
             <RecentTransactions reload={reload} />
           </Box>
         </Box>
