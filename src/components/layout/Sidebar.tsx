@@ -23,15 +23,15 @@ export default function Sidebar({ mobileOpen, onDrawerClose }: SidebarProps) {
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const drawerContent = (
-    <Box sx={{ mt: "64px" }}>
-      <List>
-        <ListItem disablePadding>
-          <ListItemButton component={Link} href="/" onClick={isMobile ? onDrawerClose : undefined}>
+    <Box sx={{ mt: 8 }}>
+      <List sx={{py: 2}}>
+        <ListItem>
+          <ListItemButton sx={{borderRadius: 3, bgcolor: theme.palette.background.default}} component={Link} href="/" onClick={isMobile ? onDrawerClose : undefined}>
             <ListItemText primary="Home" />
           </ListItemButton>
         </ListItem>
-        <ListItem disablePadding>
-          <ListItemButton component={Link} href="/transactions" onClick={isMobile ? onDrawerClose : undefined}>
+        <ListItem>
+          <ListItemButton sx={{borderRadius: 3, bgcolor: theme.palette.background.default}} component={Link} href="/transactions" onClick={isMobile ? onDrawerClose : undefined}>
             <ListItemText primary="Transações" />
           </ListItemButton>
         </ListItem>
