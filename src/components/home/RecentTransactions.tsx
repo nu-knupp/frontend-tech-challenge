@@ -228,12 +228,13 @@ export default function RecentTransactions({ reload }: { reload: number }) {
                     onDoubleClick={() => handleEdit(tx)}
                     sx={{
                       display: "block",
-                      px: 0,
+                      px: isSelected ? 2 : 0,
+                      py: isSelected ? 1 : 0,
                       cursor: "pointer",
                       backgroundColor: isSelected ? "#f0f0f0" : "transparent",
                       borderRadius: 1,
                       mb: 1,
-                      transition: "background-color 0.2s",
+                      transition: "background-color 0.2s, padding 0.2s",
                     }}
                   >
                     <Typography
@@ -274,6 +275,7 @@ export default function RecentTransactions({ reload }: { reload: number }) {
       <Dialog
         open={deleteDialogOpen}
         onClose={() => setDeleteDialogOpen(false)}
+        sx={{p: 4}}
       >
         <DialogTitle>Confirmar exclusão</DialogTitle>
         <DialogContent>
@@ -282,7 +284,7 @@ export default function RecentTransactions({ reload }: { reload: number }) {
             ser desfeita.
           </DialogContentText>
         </DialogContent>
-        <DialogActions>
+        <DialogActions sx={{p: 4}}>
           <Button onClick={() => setDeleteDialogOpen(false)}>Cancelar</Button>
           <Button
             onClick={() => {
@@ -306,8 +308,8 @@ export default function RecentTransactions({ reload }: { reload: number }) {
             width: 320,
             mt: "64px",
             height: "calc(100% - 64px)",
-            borderTopLeftRadius: 8,
-            borderBottomLeftRadius: 8,
+            // borderTopLeftRadius: 8,
+            // borderBottomLeftRadius: 8,
           },
         }}
       >
@@ -371,7 +373,7 @@ export default function RecentTransactions({ reload }: { reload: number }) {
               rows={2}
             />
           </Stack>
-          <Button variant="contained" fullWidth onClick={handleSaveEdit}>
+          <Button sx={{fontSize: 'large', p: 2}} variant="contained" fullWidth onClick={handleSaveEdit}>
             Salvar Alterações
           </Button>
         </Box>

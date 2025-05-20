@@ -48,7 +48,8 @@ export default function Home() {
             flex: { md: 2 }, 
             display: "flex", 
             flexDirection: "column",
-            width: "100%" 
+            width: "100%",
+            pb: { xs: 8 }, 
           }}>
             <RecentTransactions reload={reload} />
           </Box>

@@ -31,7 +31,7 @@ export default function LayoutContainer({ children }: LayoutContainerProps) {
         component="main"
         sx={{
           flexGrow: 1,
-          pt: "80px",
+          pt: 8,
           height: "100vh",
           overflow: "hidden",
           boxSizing: "border-box",

@@ -53,7 +53,7 @@ export default function BalanceCard() {
       sx={{
         backgroundColor: "primary.main",
         color: "primary.contrastText",
-        p: 3,
+        p: 4,
         display: "flex",
         flexDirection: "column",
         gap: 2,
