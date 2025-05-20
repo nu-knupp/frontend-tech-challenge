@@ -3,13 +3,15 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"npm:dev:next\" \"npm:dev:json\"",
+    "dev": "concurrently \"npm:dev:prepare-server-json\" \"npm:dev:next\" \"npm:dev:json\"",
+    "dev:prepare-server-json": "node scripts/initServerJson.js",
     "dev:next": "NODE_OPTIONS='--inspect' next dev --port 3000 --turbopack",
-    "dev:json": "json-server --watch src/pages/api/db/server.json --port 3001",
+    "dev:json": "json-server --watch db/server.json --port 3001",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
+  "type": "module",
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
@@ -37,7 +39,8 @@
     "eslint": "^9",
     "eslint-config-next": "15.3.0",
     "tailwindcss": "^4",
-    "typescript": "^5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3",
     "zod": "^3.25.4"
   }
 }
