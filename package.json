@@ -3,11 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "concurrently \"npm:dev:next\" \"npm:dev:json\"",
+    "dev:next": "NODE_OPTIONS='--inspect' next dev --port 3000 --turbopack",
+    "dev:json": "json-server --watch src/pages/api/db/server.json --port 3001",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "api": "json-server --watch db.json --port 3001"
+    "lint": "next lint"
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
@@ -15,21 +16,28 @@
     "@mui/icons-material": "^7.1.0",
     "@mui/material": "^7.1.0",
     "@rschpdr/react-money-input": "^1.0.0",
-    "axios": "^1.8.4",
+    "axios": "^1.9.0",
     "date-fns": "^4.1.0",
     "next": "15.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "react-number-format": "^5.4.4"
+    "react-number-format": "^5.4.4",
+    "uuid": "^11.1.0",
+    "zustand": "^5.0.4"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/uuid": "^10.0.0",
     "babel-plugin-styled-components": "^2.1.4",
+    "concurrently": "^9.1.2",
     "eslint": "^9",
     "eslint-config-next": "15.3.0",
-    "typescript": "^5"
+    "tailwindcss": "^4",
+    "typescript": "^5",
+    "zod": "^3.25.4"
   }
 }
