@@ -3,11 +3,17 @@ import BalanceCard from "@/components/home/BalanceCard";
 import NewTransactionForm from "@/components/home/NewTransactionForm";
 import RecentTransactions from "@/components/home/RecentTransactions";
 import LayoutContainer from "@/components/layout/Layout";
+import { useTransactionStore } from "@/hooks/useTransactionStore";
 import Box from "@mui/material/Box";
-import { useState } from "react";
+import { useEffect } from "react";
 
 export default function Home() {
-  const [reload, setReload] = useState(0);
+  const { fetchTransactions, fetchBalance } = useTransactionStore();
+
+  useEffect(() => {
+    fetchBalance();
+    fetchTransactions();
+  }, []);
 
   return (
     <LayoutContainer>
@@ -36,10 +42,10 @@ export default function Home() {
             sx={{ flex: 3, display: "flex", flexDirection: "column", gap: 3 }}
           >
             <BalanceCard />
-            <NewTransactionForm onAdd={() => setReload((prev) => prev + 1)} />
+            <NewTransactionForm />
           </Box>
           <Box sx={{ flex: 2, display: "flex", flexDirection: "column" }}>
-            <RecentTransactions reload={reload} />
+            <RecentTransactions />
           </Box>
         </Box>
       </Box>

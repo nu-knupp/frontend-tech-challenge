@@ -1,4 +1,3 @@
-"use client";
 import {
   Alert,
   Button,
@@ -11,10 +10,12 @@ import {
   Typography,
 } from "@mui/material";
 import { ChangeEvent, KeyboardEvent, useState } from "react";
-import api from "../../services/api";
+import { useTransactionStore } from "@/hooks/useTransactionStore";
+import { Transaction, TransactionType } from "@/types/Transaction";
+import { formatValue } from "@/utils/currency";
 
-export default function NewTransactionForm({ onAdd }: { onAdd: () => void }) {
-  const [type, setType] = useState("Depósito");
+export default function NewTransactionForm() {
+  const [type, setType] = useState<TransactionType>();
   const [formattedAmount, setFormattedAmount] = useState<string>("");
   const [observation, setObservation] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -23,6 +24,8 @@ export default function NewTransactionForm({ onAdd }: { onAdd: () => void }) {
     open: false,
     message: "",
   });
+
+  const { createTransaction } = useTransactionStore();
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (
@@ -41,13 +44,7 @@ export default function NewTransactionForm({ onAdd }: { onAdd: () => void }) {
       return;
     }
 
-    const intValue = parseInt(value, 10);
-    const formatted = (intValue / 100).toLocaleString("pt-BR", {
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
-
-    setFormattedAmount(formatted);
+    setFormattedAmount(formatValue(value));
   };
 
   const handleSubmit = async () => {
@@ -60,22 +57,25 @@ export default function NewTransactionForm({ onAdd }: { onAdd: () => void }) {
       return;
     }
 
+    if (!type) {
+      setError("Selecione o tipo de transação.");
+      return;
+    }
+
     setError(null);
 
-    const transaction = {
+    const transaction: Omit<Transaction, "id"> = {
       type,
-      amount: type === "Depósito" ? numericValue : -numericValue,
+      amount: numericValue,
       date: new Date().toISOString(),
       observation,
     };
 
     try {
-      await api.post("/transactions", transaction);
-
+      createTransaction(transaction);
       setFormattedAmount("");
       setObservation("");
       setSnackbar({ open: true, message: "Transação adicionada com sucesso!" });
-      onAdd();
     } catch (error) {
       console.error("Erro ao adicionar transação", error);
     }
@@ -89,11 +89,11 @@ export default function NewTransactionForm({ onAdd }: { onAdd: () => void }) {
         <TextField
           select
           label="Tipo de transação"
-          value={type}
-          onChange={(e) => setType(e.target.value)}
+          value={type ?? ""}
+          onChange={(e) => setType(e.target.value as TransactionType)}
         >
-          <MenuItem value="Depósito">Depósito</MenuItem>
-          <MenuItem value="Transferência">Transferência</MenuItem>
+          <MenuItem value="credit">Depósito</MenuItem>
+          <MenuItem value="debit">Transferência</MenuItem>
         </TextField>
 
         <TextField
