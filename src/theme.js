@@ -3,23 +3,23 @@ import { createTheme } from '@mui/material/styles';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#004d66', // Azul escuro do cabeçalho e cards
-      contrastText: '#ffffff',
+      main: '#14213D', // Dark blue
+      contrastText: '#FFFFFF',
     },
     secondary: {
-      main: '#8BC34A', // Verde claro (menu selecionado)
+      main: '#FCA311', // Orange
     },
     background: {
-      default: '#f1f7f5', // Fundo geral
-      paper: '#ffffff', // Cards em branco ou painel lateral branco
+      default: '#E5E5E5', // Light gray
+      paper: '#FFFFFF', // White
     },
     text: {
-      primary: '#1d1d1d',
-      secondary: '#4f4f4f',
+      primary: '#000000', // Black
+      secondary: '#14213D', // Dark blue for secondary text
     },
   },
   typography: {
-    fontFamily: 'Arial, sans-serif',
+    fontFamily: 'Inter, sans-serif',
     h6: {
       fontWeight: 600,
     },
@@ -35,6 +35,22 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 12,
+          boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+          padding: '1rem',
+        },
+      },
+    },
+    MuiDrawer: {
+      styleOverrides: {
+        root: {
+          boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+        },
+      },
+    },
+    MuiToolbar: {
+      styleOverrides: {
+        root: {
+          boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
         },
       },
     },
