@@ -19,7 +19,7 @@ export default function Header({ onDrawerToggle }: HeaderProps) {
       elevation={0}
       sx={{
         zIndex: (theme) => theme.zIndex.drawer + 1,
-        backgroundColor: "#ffffff",
+        backgroundColor: "background.paper",
       }}
     >
       <Toolbar sx={{ justifyContent: "space-between" }}>
@@ -35,10 +35,10 @@ export default function Header({ onDrawerToggle }: HeaderProps) {
               <MenuIcon />
             </IconButton>
           )}
-          <Typography variant="h6" noWrap component="div">
+          <Typography sx={{ color: 'primary.main' }} variant="h6" noWrap component="div">
             Banco Simples
           </Typography>
-          <AccountBalance sx={{ ml: 1 }} />
+          <AccountBalance sx={{ ml: 1, color: 'primary.main' }} />
         </Box>
       </Toolbar>
     </AppBar>
