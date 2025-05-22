@@ -3,19 +3,20 @@ import { createTheme } from '@mui/material/styles';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#14213D', // Dark blue
+      main: '#687EDB', // Purple
       contrastText: '#FFFFFF',
     },
     secondary: {
-      main: '#FCA311', // Orange
+      main: '#FF9563', // Orange
     },
     background: {
-      default: '#E5E5E5', // Light gray
-      paper: '#FFFFFF', // White
+      default: '#E0E8F8', // Light blue
+      paper: '#f3f6fc', // White
+      // paper: '#FFFFFF', // White
     },
     text: {
-      primary: '#000000', // Black
-      secondary: '#14213D', // Dark blue for secondary text
+      primary: '#0c145e', // Black
+      secondary: '#65748f', // Light purple for secondary text
     },
   },
   typography: {
@@ -40,6 +41,15 @@ const theme = createTheme({
         },
       },
     },
+    // MuiCard: {
+    //   styleOverrides: {
+    //     root: {
+    //       borderRadius: 12,
+    //       boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+    //       padding: '1rem',
+    //     },
+    //   },
+    // },
     MuiDrawer: {
       styleOverrides: {
         root: {

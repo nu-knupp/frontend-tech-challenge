@@ -24,14 +24,14 @@ export default function Sidebar({ mobileOpen, onDrawerClose }: SidebarProps) {
 
   const drawerContent = (
     <Box sx={{ mt: 8 }}>
-      <List sx={{py: 2}}>
+      <List sx={{ py: 2 }}>
         <ListItem>
-          <ListItemButton sx={{borderRadius: 3, bgcolor: theme.palette.background.default}} component={Link} href="/" onClick={isMobile ? onDrawerClose : undefined}>
+          <ListItemButton sx={{ borderRadius: 3, bgcolor: theme.palette.background.default }} component={Link} href="/" onClick={isMobile ? onDrawerClose : undefined}>
             <ListItemText primary="Home" />
           </ListItemButton>
         </ListItem>
         <ListItem>
-          <ListItemButton sx={{borderRadius: 3, bgcolor: theme.palette.background.default}} component={Link} href="/transactions" onClick={isMobile ? onDrawerClose : undefined}>
+          <ListItemButton sx={{ borderRadius: 3, bgcolor: theme.palette.background.default }} component={Link} href="/transactions" onClick={isMobile ? onDrawerClose : undefined}>
             <ListItemText primary="Transações" />
           </ListItemButton>
         </ListItem>
@@ -51,17 +51,17 @@ export default function Sidebar({ mobileOpen, onDrawerClose }: SidebarProps) {
         }}
         sx={{
           display: { xs: 'block', md: 'none' },
-          '& .MuiDrawer-paper': { 
-            boxSizing: 'border-box', 
+          '& .MuiDrawer-paper': {
+            boxSizing: 'border-box',
             width: drawerWidth,
-            backgroundColor: "#ffffff",
+            backgroundColor: "background.paper",
             borderRight: "1px solid #e0e0e0",
           },
         }}
       >
         {drawerContent}
       </Drawer>
-      
+
       {/* Desktop drawer */}
       <Drawer
         variant="permanent"
@@ -72,7 +72,7 @@ export default function Sidebar({ mobileOpen, onDrawerClose }: SidebarProps) {
           [`& .MuiDrawer-paper`]: {
             width: drawerWidth,
             boxSizing: "border-box",
-            backgroundColor: "#ffffff",
+            backgroundColor: "background.paper",
             borderRight: "1px solid #e0e0e0",
           },
         }}

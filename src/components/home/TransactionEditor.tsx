@@ -155,6 +155,7 @@ export default function TransactionEditor({
           variant="contained"
           fullWidth
           disabled={hasntChangedSomeField}
+          sx={{ fontWeight: 'bold', fontSize: 'large', p: 1.5 }}
         >
           Salvar Alterações
         </Button>
