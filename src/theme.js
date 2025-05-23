@@ -3,23 +3,24 @@ import { createTheme } from '@mui/material/styles';
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#004d66', // Azul escuro do cabeçalho e cards
-      contrastText: '#ffffff',
+      main: '#687EDB', // Purple
+      contrastText: '#FFFFFF',
     },
     secondary: {
-      main: '#8BC34A', // Verde claro (menu selecionado)
+      main: '#FF9563', // Orange
     },
     background: {
-      default: '#f1f7f5', // Fundo geral
-      paper: '#ffffff', // Cards em branco ou painel lateral branco
+      default: '#E0E8F8', // Light blue
+      paper: '#f3f6fc', // White
+      // paper: '#FFFFFF', // White
     },
     text: {
-      primary: '#1d1d1d',
-      secondary: '#4f4f4f',
+      primary: '#0c145e', // Black
+      secondary: '#65748f', // Light purple for secondary text
     },
   },
   typography: {
-    fontFamily: 'Arial, sans-serif',
+    fontFamily: 'Inter, sans-serif',
     h6: {
       fontWeight: 600,
     },
@@ -35,6 +36,31 @@ const theme = createTheme({
       styleOverrides: {
         root: {
           borderRadius: 12,
+          boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+          padding: '1rem',
+        },
+      },
+    },
+    // MuiCard: {
+    //   styleOverrides: {
+    //     root: {
+    //       borderRadius: 12,
+    //       boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+    //       padding: '1rem',
+    //     },
+    //   },
+    // },
+    MuiDrawer: {
+      styleOverrides: {
+        root: {
+          boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+        },
+      },
+    },
+    MuiToolbar: {
+      styleOverrides: {
+        root: {
+          boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
         },
       },
     },

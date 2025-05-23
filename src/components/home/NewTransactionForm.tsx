@@ -113,10 +113,9 @@ export default function NewTransactionForm() {
           onChange={(e) => setObservation(e.target.value)}
           multiline
           rows={2}
-          placeholder="Adicione uma observação (opcional)"
         />
 
-        <Button variant="contained" onClick={handleSubmit}>
+        <Button sx={{ p: 2, fontSize: 'large', fontWeight: 'bold' }} variant="contained" onClick={handleSubmit}>
           Concluir transação
         </Button>
       </CardContent>

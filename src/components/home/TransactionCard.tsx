@@ -23,12 +23,13 @@ export default function TransactionCard({
       onDoubleClick={handleDoubleClick}
       sx={{
         display: "block",
-        px: 1,
+        px: isSelected ? 2 : 1,
+        py: isSelected ? 2 : 1,
         cursor: "pointer",
         backgroundColor: isSelected ? "#f0f0f0" : "transparent",
         borderRadius: 1,
         mb: 1,
-        transition: "background-color 0.2s",
+        transition: "background-color 0.2s, padding 0.2s",
       }}
     >
       <Typography variant="body2" sx={{ color: "text.secondary" }}>
