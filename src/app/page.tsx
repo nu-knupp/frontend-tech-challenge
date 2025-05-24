@@ -21,7 +21,7 @@ export default function Home() {
           height: "100%",
           overflowY: "auto",
           boxSizing: "border-box",
-          padding: { xs: 2, sm: 3 },
+          padding: { xs: 2 },
         }}
       >
         <Box
@@ -42,7 +42,6 @@ export default function Home() {
               flexDirection: { xs: "column", md: "row" },
               alignItems: "center",
               gap: 4,
-              mt: 4,
             }}
           >
             <Box sx={{ flex: 1 }}>
@@ -97,7 +96,7 @@ export default function Home() {
             </Box>
           </Box>
 
-          <Box sx={{ width: "100%", mt: 4 }}>
+          <Box sx={{ width: "100%" }}>
             <Typography variant="h4" sx={{ mb: 4, textAlign: "center", color: "primary.main" }}>
               Nossos Serviços
             </Typography>
@@ -144,7 +143,6 @@ export default function Home() {
           <Box
             sx={{
               width: "100%",
-              mt: 6,
               mb: 4,
               p: 4,
               borderRadius: 2,
@@ -154,7 +152,7 @@ export default function Home() {
               boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
             }}
           >
-            <Typography variant="h4" sx={{ mb: 2 }}>
+            <Typography variant="h4">
               Comece a gerenciar suas finanças hoje
             </Typography>
             <Typography variant="body1" sx={{ mb: 3 }}>
