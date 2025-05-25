@@ -51,7 +51,7 @@ nvm use
 
 ---
 
-## 🔥 Funcionalidades
+## 🛠️ Funcionalidades
 
 - ✅ Simulação de backend RESTful com `json-server`
 - ✅ BFF construído com Next.js (`/api`) seguindo os princípios de **SOLID**
@@ -61,6 +61,14 @@ nvm use
 - ✅ Manipulação de datas e formatação de valores
 - ✅ Criação, listagem, edição e exclusão de transações
 - ✅ Cálculo de saldo do usuário com base nas transações
+
+---
+
+### 📽️ Vídeo
+
+Para assistir ao vídeo de apresentação deste projeto, acesse o link abaixo:
+
+`https://www.youtube.com/watch?v=`
 
 ---
 
@@ -141,7 +149,7 @@ Foram implementados os seguintes endpoints:
 
 A validação dos campos no momento da criação ou edição de uma transação é feita em **tempo de execução** utilizando o **Zod**, garantindo a integridade dos dados.
 
-### 🧠 Estado global
+### 🌎 Estado global
 
 Foi utilizado **Zustand** para o gerenciamento de estado global no frontend, através do hook personalizado `useTransactionStore`, que permite:
 
@@ -151,7 +159,7 @@ Foi utilizado **Zustand** para o gerenciamento de estado global no frontend, atr
 
 ---
 
-## 🧠 Princípios de Arquitetura
+## 🗃️ Princípios de Arquitetura
 
 Aplicação construída aplicando os princípios de **SOLID** na camada de BFF:
 
