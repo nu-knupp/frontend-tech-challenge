@@ -52,14 +52,14 @@ export default function RecentTransactions() {
 
   return (
     <>
-      <Card sx={{ minWidth: 250 }}>
+      <Card sx={{ minWidth: 250, py: { xs: 0, sm: 1 }, px: { xs: 0, sm: 1 } }}>
         <CardContent>
           <Box
             display="flex"
             justifyContent="space-between"
             alignItems="center"
           >
-            <Typography variant="h6">Extrato</Typography>
+            <Typography variant="h6" sx={{ pl: ".5rem" }}>Extrato</Typography>
             <Box>
               <IconButton
                 size="small"

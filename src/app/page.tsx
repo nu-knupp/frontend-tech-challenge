@@ -40,19 +40,18 @@ export default function Home() {
               width: "100%",
               display: "flex",
               flexDirection: { xs: "column", md: "row" },
-              alignItems: "center",
-              gap: 4,
+              alignItems: "center"
             }}
           >
             <Box sx={{ flex: 1 }}>
-              <Typography variant="h3" sx={{ mb: 2, fontWeight: "bold", color: "primary.main" }}>
+              <Typography variant="h3" sx={{ mb: 2, fontWeight: "bold", color: "primary.main", textAlign: { xs: "center", md: "left" } }}>
                 Banco Simples
               </Typography>
-              <Typography variant="h5" sx={{ mb: 3, color: "primary.main" }}>
+              <Typography variant="h5" sx={{ mb: 3, color: "primary.main", textAlign: { xs: "center", md: "left" } }}>
                 Seu dinheiro. Sua maneira.
                 Seu controle financeiro simplificado.
               </Typography>
-              <Typography variant="body1" sx={{ mb: 4 }}>
+              <Typography variant="body1" sx={{ mb: 4, textAlign: { xs: "center", md: "left" } }}>
                 Gerencie suas transações financeiras de forma rápida e intuitiva.
                 Sem complicações, sem taxas escondidas. Apenas simplicidade bancária.
               </Typography>
@@ -143,7 +142,6 @@ export default function Home() {
           <Box
             sx={{
               width: "100%",
-              mb: 4,
               p: 4,
               borderRadius: 2,
               bgcolor: "primary.main",

@@ -82,7 +82,7 @@ export default function NewTransactionForm() {
   };
 
   return (
-    <Card>
+    <Card sx={{ px: { xs: 0, sm: "1rem" }, py: 0 }}>
       <CardContent sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
         <Typography variant="h6">Nova transação</Typography>
 

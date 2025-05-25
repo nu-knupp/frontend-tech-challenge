@@ -26,7 +26,7 @@ export default function DeleteTransactionDialog({
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>Confirmar exclusão</DialogTitle>
+      <DialogTitle sx={{ textAlign: "center" }}>Confirmar Exclusão</DialogTitle>
       <DialogContent>
         <DialogContentText>
           Tem certeza que deseja deletar esta transação? Esta ação não poderá
