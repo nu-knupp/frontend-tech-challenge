@@ -1,5 +1,6 @@
 import { Transaction } from "@/types/Transaction";
 import { ListItem, Typography } from "@mui/material";
+import { formatValue } from "@/utils/currency";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
 
@@ -28,7 +29,7 @@ export default function TransactionCard({
         cursor: "pointer",
         backgroundColor: isSelected ? "#f0f0f0" : "transparent",
         borderRadius: 1,
-        mb: 1,
+        mb: { xs: 0, md: 0.5 },
         transition: "background-color 0.2s, padding 0.2s",
       }}
     >
@@ -40,9 +41,9 @@ export default function TransactionCard({
         <strong
           style={{ color: transaction.type == "credit" ? "green" : "red" }}
         >
-          {transaction.type == "debit"
-            ? `-R$ ${Math.abs(transaction.amount).toFixed(2)}`
-            : `R$ ${transaction.amount.toFixed(2)}`}
+          {transaction.type === "debit"
+            ? `- ${formatValue(transaction.amount)}`
+            : formatValue(transaction.amount)}
         </strong>
       </Typography>
       <Typography variant="caption" sx={{ color: "text.secondary" }}>
