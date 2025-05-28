@@ -10,7 +10,7 @@
 
 Este é um projeto desenvolvido com [Next.js](https://nextjs.org), criado utilizando [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-A aplicação consiste em um frontend construído com **Next.js (Pages Router)**, que também atua como um **Backend For Frontend (BFF)**. Na construção do BFF foram aplicados os princípios de **SOLID** e utilizado o **json-server** para simular um banco de dados local.
+A aplicação consiste em um frontend construído com **Next.js**, que também atua como um **Backend For Frontend (BFF)**. Na construção do BFF foram aplicados os princípios de **SOLID** e utilizado o **json-server** para simular um banco de dados local.
 
 ---
 
@@ -36,7 +36,7 @@ nvm use
 
 ## 🏗️ Tecnologias Utilizadas
 
-- **Next.js (Pages Router)** — Framework React para Web
+- **Next.js** — Framework React para Web
 - **TypeScript** — Tipagem estática para JavaScript
 - **Zustand** — Gerenciamento de estado global
 - **MUI (Material UI)** — Biblioteca de componentes UI
@@ -110,8 +110,15 @@ Se o arquivo `server.json` não existir na pasta `src/pages/api/db/`, ele será 
 
 ```
 ├── src
-│   ├── pages
-│   │   ├── api (BFF - seguindo princípios de SOLID)
+│   ├── app                    # Páginas Next.js App Router
+│   │   ├── page.tsx           # Página Home
+│   │   ├── transactions
+│   │   │   └── page.tsx       # Página Transactions
+│   │   └── ...
+│   ├── pages                  # Next.js Pages Router
+│   │   ├── api                # BFF - seguindo princípios de SOLID
+│   │   │   ├── balance
+│   │   │   └── transactions
 │   │   └── ...
 │   ├── components
 │   ├── hooks
@@ -119,8 +126,8 @@ Se o arquivo `server.json` não existir na pasta `src/pages/api/db/`, ele será 
 │   ├── types
 │   └── utils
 ├── scripts
-│   └── initServerJson.js (Cria server.json automaticamente)
-├── .nvmrc (Node 18.20.6)
+│   └── initServerJson.js      # Cria server.json automaticamente
+├── .nvmrc                     # Node 18.20.6
 ├── package.json
 ```
 
