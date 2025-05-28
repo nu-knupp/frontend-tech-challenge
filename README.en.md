@@ -10,7 +10,7 @@
 
 This project was developed with [Next.js](https://nextjs.org), bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-The application consists of a frontend built with **Next.js (Pages Router)**, which also acts as a **Backend For Frontend (BFF)**. The BFF follows **SOLID** principles and uses **json-server** to simulate a local database.
+The application consists of a frontend built with **Next.js (App Router)**, which also acts as a **Backend For Frontend (BFF using Api Routes)**. The BFF follows **SOLID** principles and uses **json-server** to simulate a local database.
 
 ---
 
@@ -36,7 +36,7 @@ nvm use
 
 ## 🏗️ Technologies Used
 
-- **Next.js (Pages Router)** — React framework for web
+- **Next.js (App Router)** — React framework for web
 - **TypeScript** — Static typing for JavaScript
 - **Zustand** — Global state management
 - **MUI (Material UI)** — UI component library
