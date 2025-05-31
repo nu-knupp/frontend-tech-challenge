@@ -1,10 +1,8 @@
 import { CreateTransactionRepository } from '@/services/repositories/CreateTransactionRepository';
 import { ListTransactionsRepository } from '@/services/repositories/ListTransactionsRepository';
-import { UpdateTransactionRepository } from '@/services/repositories/UpdateTransactionRepository';
 import { TransactionSchema } from '@/services/schema/TransactionSchema';
 import { CreateTransactionUseCase } from '@/services/usecases/CreateTransactionUseCase';
 import { ListTransactionsUseCase } from '@/services/usecases/ListTransactionsUseCase';
-import { UpdateTransactionUseCase } from '@/services/usecases/UpdateTransactionUseCase';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

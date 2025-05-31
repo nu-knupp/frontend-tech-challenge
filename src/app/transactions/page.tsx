@@ -13,6 +13,7 @@ export default function Transactions() {
   useEffect(() => {
     fetchBalance();
     fetchTransactions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
