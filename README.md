@@ -68,7 +68,7 @@ nvm use
 
 Para assistir ao vídeo de apresentação deste projeto, acesse o link abaixo:
 
-`https://www.youtube.com/watch?v=`
+[https://www.youtube.com/watch?v=](https://youtu.be/hIVuZalhlWc)
 
 ---
 
