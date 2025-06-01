@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "scripts/initServerJson.js",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": ["server.json"]
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "scripts/initServerJson.js"
+    }
+  ]
