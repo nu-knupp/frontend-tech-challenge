@@ -68,8 +68,7 @@ nvm use
 
 Para assistir ao vídeo de apresentação deste projeto, acesse o link abaixo:
 
-[https://www.youtube.com/watch?v=](https://youtu.be/hIVuZalhlWc)
-
+[https://www.youtube.com/watch?v=Fa9JwRX2lW4[(https://www.youtube.com/watch?v=Fa9JwRX2lW4)
 ---
 
 ## 🚀 Como executar o projeto
