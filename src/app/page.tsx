@@ -8,6 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import LayoutContainer from "@/components/layout/Layout";
 import { Key, Receipt, Savings } from "@mui/icons-material";
+import FinancialSummary from "@/components/home/FinancialSummary";
 
 export default function Home() {
   return (
@@ -22,8 +23,7 @@ export default function Home() {
           overflowY: "auto",
           boxSizing: "border-box",
           padding: { xs: 2 },
-        }}
-      >
+        }}>
         <Box
           sx={{
             display: "flex",
@@ -33,16 +33,14 @@ export default function Home() {
             maxWidth: "1200px",
             width: "100%",
             margin: "0 auto",
-          }}
-        >
+          }}>
           <Box
             sx={{
               width: "100%",
               display: "flex",
               flexDirection: { xs: "column", md: "row" },
               alignItems: "center"
-            }}
-          >
+            }}>
             <Box sx={{ flex: 1 }}>
               <Typography variant="h3" sx={{ mb: 2, fontWeight: "bold", color: "primary.main", textAlign: { xs: "center", md: "left" } }}>
                 Banco Simples
@@ -68,8 +66,7 @@ export default function Home() {
                   fontSize: "large",
                   fontWeight: "bold",
                   boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
-                }}
-              >
+                }}>
                 Iniciar Agora
               </Button>
             </Box>
@@ -81,8 +78,7 @@ export default function Home() {
                   height: { xs: "280px", sm: "400px" },
                   flexShrink: 0,
                   maxWidth: { xs: "100%", sm: "400px" }
-                }}
-              >
+                }}>
                 <Image
                   src="/bank-illustration.png"
                   alt="Banco"
@@ -95,7 +91,7 @@ export default function Home() {
             </Box>
           </Box>
 
-          <Box sx={{ width: "100%" }}>
+          <Box sx={{ width: "100%", mb: 4 }}>
             <Typography variant="h4" sx={{ mb: 4, textAlign: "center", color: "primary.main" }}>
               Nossos Serviços
             </Typography>
@@ -139,6 +135,8 @@ export default function Home() {
             </Box>
           </Box>
 
+          <FinancialSummary />
+
           <Box
             sx={{
               width: "100%",
@@ -148,8 +146,7 @@ export default function Home() {
               color: "primary.contrastText",
               textAlign: "center",
               boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
-            }}
-          >
+            }}>
             <Typography variant="h4">
               Comece a gerenciar suas finanças hoje
             </Typography>
@@ -173,8 +170,7 @@ export default function Home() {
                 boxShadow: 3,
                 fontWeight: "bold",
                 fontSize: "large",
-              }}
-            >
+              }}>
               Acessar Transações
             </Button>
           </Box>
