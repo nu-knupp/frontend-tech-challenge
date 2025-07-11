@@ -5,10 +5,16 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
+  ListItemIcon,
   Box,
   useTheme,
   useMediaQuery,
 } from "@mui/material";
+import {
+  Home,
+  Receipt,
+  Analytics,
+} from "@mui/icons-material";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
@@ -26,43 +32,53 @@ export default function Sidebar({ mobileOpen, onDrawerClose }: SidebarProps) {
 
   const isActive = (path: string) => pathname === path;
 
+  const menuItems = [
+    {
+      text: "Home",
+      path: "/",
+      icon: <Home />,
+    },
+    {
+      text: "Transações",
+      path: "/transactions",
+      icon: <Receipt />,
+    },
+    {
+      text: "Análises",
+      path: "/analytics",
+      icon: <Analytics />,
+    },
+  ];
+
   const drawerContent = (
     <Box sx={{ mt: 8 }}>
       <List sx={{ py: 2 }}>
-        <ListItem>
-          <ListItemButton
-            sx={{
-              borderRadius: 3,
-              bgcolor: isActive('/') ? theme.palette.primary.main : theme.palette.background.default,
-              color: isActive('/') ? theme.palette.primary.contrastText : 'inherit',
-              '&:hover': {
-                bgcolor: isActive('/') ? theme.palette.primary.dark : theme.palette.action.hover,
-              },
-            }}
-            component={Link}
-            href="/"
-            onClick={isMobile ? onDrawerClose : undefined}
-          >
-            <ListItemText primary="Home" />
-          </ListItemButton>
-        </ListItem>
-        <ListItem>
-          <ListItemButton
-            sx={{
-              borderRadius: 3,
-              bgcolor: isActive('/transactions') ? theme.palette.primary.main : theme.palette.background.default,
-              color: isActive('/transactions') ? theme.palette.primary.contrastText : 'inherit',
-              '&:hover': {
-                bgcolor: isActive('/transactions') ? theme.palette.primary.dark : theme.palette.action.hover,
-              },
-            }}
-            component={Link}
-            href="/transactions"
-            onClick={isMobile ? onDrawerClose : undefined}
-          >
-            <ListItemText primary="Transações" />
-          </ListItemButton>
-        </ListItem>
+        {menuItems.map((item, index) => (
+          <ListItem key={index}>
+            <ListItemButton
+              sx={{
+                borderRadius: 3,
+                bgcolor: isActive(item.path) ? theme.palette.primary.main : theme.palette.background.default,
+                color: isActive(item.path) ? theme.palette.primary.contrastText : 'inherit',
+                '&:hover': {
+                  bgcolor: isActive(item.path) ? theme.palette.primary.dark : theme.palette.action.hover,
+                },
+              }}
+              component={Link}
+              href={item.path}
+              onClick={isMobile ? onDrawerClose : undefined}
+            >
+              <ListItemIcon
+                sx={{
+                  color: isActive(item.path) ? theme.palette.primary.contrastText : 'inherit',
+                }}
+              >
+                {item.icon}
+              </ListItemIcon>
+              <ListItemText primary={item.text} />
+            </ListItemButton>
+          </ListItem>
+        ))}
       </List>
     </Box>
   );
