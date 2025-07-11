@@ -1,29 +1,64 @@
+import { useTransactionStore } from "@/hooks/useTransactionStore";
+import { Transaction, TransactionType } from "@/types/Transaction";
+import { formatValue } from "@/utils/currency";
+import { Delete } from "@mui/icons-material";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import {
   Alert,
+  Box,
   Button,
   Card,
   CardContent,
   FormHelperText,
+  IconButton,
   MenuItem,
   Snackbar,
   TextField,
   Typography,
 } from "@mui/material";
-import { ChangeEvent, KeyboardEvent, useState } from "react";
-import { useTransactionStore } from "@/hooks/useTransactionStore";
-import { Transaction, TransactionType } from "@/types/Transaction";
-import { formatValue } from "@/utils/currency";
+import { styled } from "@mui/material/styles";
+import { ChangeEvent, KeyboardEvent, useRef, useState } from "react";
+
+const VisuallyHiddenInput = styled("input")({
+  clip: "rect(0 0 0 0)",
+  clipPath: "inset(50%)",
+  height: 5,
+  overflow: "hidden",
+  position: "absolute",
+  bottom: 0,
+  left: 0,
+  whiteSpace: "nowrap",
+  width: 1,
+});
 
 export default function NewTransactionForm() {
   const [type, setType] = useState<TransactionType>();
   const [formattedAmount, setFormattedAmount] = useState<string>("");
   const [observation, setObservation] = useState("");
   const [error, setError] = useState<string | null>(null);
-
   const [snackbar, setSnackbar] = useState<{ open: boolean; message: string }>({
     open: false,
     message: "",
   });
+  const [file, setFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedFile = event.target.files?.[0] || null;
+    setFile(selectedFile);
+    console.log("Arquivo selecionado:", selectedFile);
+  };
+
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        resolve(reader.result as string);
+      };
+      reader.onerror = (error) => reject(error);
+      reader.readAsDataURL(file);
+    });
+  };
 
   const { createTransaction } = useTransactionStore();
 
@@ -64,20 +99,40 @@ export default function NewTransactionForm() {
 
     setError(null);
 
+    let base64File = "";
+    if (file) {
+      try {
+        base64File = await fileToBase64(file);
+      } catch (err) {
+        console.error("Erro ao converter arquivo para base64:", err);
+        return;
+      }
+    }
+
     const transaction: Omit<Transaction, "id"> = {
       type,
       amount: numericValue,
       date: new Date().toISOString(),
       observation,
+      file: base64File,
+      fileName: file?.name || "",
     };
 
     try {
       createTransaction(transaction);
       setFormattedAmount("");
       setObservation("");
+      setFile(null);
       setSnackbar({ open: true, message: "Transação adicionada com sucesso!" });
     } catch (error) {
       console.error("Erro ao adicionar transação", error);
+    }
+  };
+
+  const handleRemoveFile = () => {
+    setFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
     }
   };
 
@@ -115,7 +170,75 @@ export default function NewTransactionForm() {
           rows={2}
         />
 
-        <Button sx={{ p: 2, fontSize: 'large', fontWeight: 'bold' }} variant="contained" onClick={handleSubmit}>
+        <Button
+          component="label"
+          role={undefined}
+          variant="outlined"
+          tabIndex={-1}
+          startIcon={<CloudUploadIcon />}
+          sx={{ p: 3 }}
+        >
+          upload de Arquivo
+          <VisuallyHiddenInput
+            ref={fileInputRef}
+            type="file"
+            onChange={handleFileChange}
+            multiple={false}
+          />
+        </Button>
+        {file && (
+          <Box
+            sx={{
+              mt: 1,
+              p: 1,
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+              maxWidth: 350,
+            }}
+          >
+            {file.type.startsWith("image/") ? (
+              <Box
+                component="img"
+                src={URL.createObjectURL(file)}
+                alt="Preview"
+                sx={{
+                  width: 40,
+                  height: 40,
+                  objectFit: "cover",
+                  borderRadius: 1,
+                }}
+              />
+            ) : (
+              <Box
+                sx={{
+                  width: 40,
+                  height: 40,
+                  bgcolor: "#eee",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: 18,
+                  borderRadius: 1,
+                }}
+              >
+                📄
+              </Box>
+            )}
+            <Typography variant="body2" title={file.name} noWrap>
+              {file.name}
+            </Typography>
+            <IconButton size="small" color="error" onClick={handleRemoveFile}>
+              <Delete fontSize="small" />
+            </IconButton>
+          </Box>
+        )}
+
+        <Button
+          sx={{ p: 2, fontSize: "large", fontWeight: "bold" }}
+          variant="contained"
+          onClick={handleSubmit}
+        >
           Concluir transação
         </Button>
       </CardContent>
