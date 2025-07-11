@@ -1,8 +1,9 @@
 import { Transaction } from "@/types/Transaction";
-import { ListItem, Typography } from "@mui/material";
+import { Box, IconButton, ListItem, Typography } from "@mui/material";
 import { formatValue } from "@/utils/currency";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import SaveAltIcon from "@mui/icons-material/SaveAlt";
 
 interface TransactionCardProps {
   isSelected: boolean;
@@ -33,22 +34,53 @@ export default function TransactionCard({
         transition: "background-color 0.2s, padding 0.2s",
       }}
     >
-      <Typography variant="body2" sx={{ color: "text.secondary" }}>
-        {format(parseISO(transaction.date), "MMMM", { locale: ptBR })}
-      </Typography>
-      <Typography variant="body1">
-        {transaction.type == "credit" ? "Crédito" : "Débito"}{" "}
-        <strong
-          style={{ color: transaction.type == "credit" ? "green" : "red" }}
-        >
-          {transaction.type === "debit"
-            ? `- ${formatValue(transaction.amount)}`
-            : formatValue(transaction.amount)}
-        </strong>
-      </Typography>
-      <Typography variant="caption" sx={{ color: "text.secondary" }}>
-        {format(parseISO(transaction.date), "dd/MM/yyyy")}
-      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Typography variant="body2" sx={{ color: "text.secondary" }}>
+          {format(parseISO(transaction.date), "MMMM", { locale: ptBR })}
+        </Typography>
+        <Typography variant="caption" sx={{ color: "text.secondary" }}>
+          {format(parseISO(transaction.date), "dd/MM/yyyy")}
+        </Typography>
+      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Typography variant="body1">
+          {transaction.type === "credit" ? "Crédito" : "Débito"}{" "}
+          <strong
+            style={{ color: transaction.type === "credit" ? "green" : "red" }}
+          >
+            {transaction.type === "debit"
+              ? `- ${formatValue(transaction.amount)}`
+              : formatValue(transaction.amount)}
+          </strong>
+        </Typography>
+
+        {transaction.file && (
+          <IconButton
+            size="small"
+            onClick={(e) => {
+              e.stopPropagation();
+              const link = document.createElement("a");
+              link.href = transaction.file ?? "";
+              link.download = transaction.fileName || "arquivo";
+              link.click();
+            }}
+          >
+            <SaveAltIcon fontSize="small" sx={{ color: "text.secondary" }} />
+          </IconButton>
+        )}
+      </Box>
       {transaction.observation && (
         <Typography variant="caption" sx={{ display: "block" }}>
           Obs: {transaction.observation}
