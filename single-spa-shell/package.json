@@ -1,0 +1,26 @@
+{
+  "name": "single-spa-shell",
+  "version": "1.0.0",
+  "description": "Single-SPA root config for micro-frontend orchestration",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "build": "webpack --mode production",
+    "build:dev": "webpack --mode development"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "single-spa": "^6.0.1"
+  },
+  "devDependencies": {
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4",
+    "html-webpack-plugin": "^5.5.3"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
