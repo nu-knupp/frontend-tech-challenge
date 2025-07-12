@@ -109,8 +109,8 @@ export default function TransactionEditor({
       type,
       amount: parseCurrencyString(formattedAmount),
       observation,
-      file: fileBase64 || '',
-      fileName: fileName || '',
+      ...(fileBase64 && { file: fileBase64 }),
+      ...(fileName && { fileName }),
     };
 
     updateTransaction(

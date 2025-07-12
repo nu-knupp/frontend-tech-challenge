@@ -6,8 +6,8 @@ export type Transaction = {
   amount: number;
   observation?: string;
   type: TransactionType;
-  file: string | null | undefined;
-  fileName: string | null;
+  file?: string;
+  fileName?: string;
 };
 
 export type TransactionFormInput = {

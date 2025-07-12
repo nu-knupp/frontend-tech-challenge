@@ -114,8 +114,8 @@ export default function NewTransactionForm() {
       amount: numericValue,
       date: new Date().toISOString(),
       observation,
-      file: base64File,
-      fileName: file?.name || "",
+      ...(base64File && { file: base64File }),
+      ...(file?.name && { fileName: file.name }),
     };
 
     try {

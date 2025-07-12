@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  # JSON Server API
+  json-server:
+    image: node:18-alpine
+    container_name: frontend-tech-challenge-api
+    working_dir: /app
+    volumes:
+      - ./db:/app/db
+      - ./scripts:/app/scripts
+      - ./package.json:/app/package.json
+    command: >
+      sh -c "
+        npm install -g json-server &&
+        node scripts/initServerJson.js &&
+        json-server --watch db/server.json --port 3001 --host 0.0.0.0
+      "
+    ports:
+      - "3001:3001"
+    networks:
+      - app-network
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:3001/transactions"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Next.js Frontend Application
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: frontend-tech-challenge-app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - DOCKER_ENV=true
+      - API_URL=http://json-server:3001
+    depends_on:
+      json-server:
+        condition: service_healthy
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
