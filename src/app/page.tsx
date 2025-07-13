@@ -74,16 +74,16 @@ export default function Home() {
               <Box
                 sx={{
                   position: "relative",
-                  width: { xs: "100%", sm: "400px" },
-                  height: { xs: "280px", sm: "400px" },
+                  width: { xs: "100%", sm: "480px", md: "480px" },
+                  height: { xs: "280px", sm: "480px", md: "480px" },
                   flexShrink: 0,
-                  maxWidth: { xs: "100%", sm: "400px" }
+                  maxWidth: { xs: "100%", sm: "480px", md: "480px" }
                 }}>
                 <Image
                   src="/bank-illustration.png"
                   alt="Banco"
                   fill
-                  sizes="(max-width: 600px) 100vw, 400px"
+                  sizes="(max-width: 600px) 100vw, 480px"
                   style={{ objectFit: "contain" }}
                   priority
                 />
@@ -135,7 +135,11 @@ export default function Home() {
             </Box>
           </Box>
 
-          <FinancialSummary />
+          <Link href="/analytics" passHref legacyBehavior>
+            <Box sx={{ width: '100%', cursor: 'pointer' }}>
+              <FinancialSummary />
+            </Box>
+          </Link>
 
           <Box
             sx={{

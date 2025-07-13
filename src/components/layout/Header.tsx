@@ -3,6 +3,8 @@
 import { AppBar, Toolbar, Typography, IconButton, Box, useTheme, useMediaQuery } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import { AccountBalance } from "@mui/icons-material";
+import { AccountCircle } from "@mui/icons-material";
+import Link from "next/link";
 
 interface HeaderProps {
   onDrawerToggle: () => void;
@@ -39,6 +41,13 @@ export default function Header({ onDrawerToggle }: HeaderProps) {
             Banco Simples
           </Typography>
           <AccountBalance sx={{ ml: 1, color: 'primary.main' }} />
+        </Box>
+        <Box>
+          <Link href="/login" passHref legacyBehavior>
+            <IconButton color="primary" sx={{ ml: 2 }}>
+              <AccountCircle sx={{ fontSize: 38 }} />
+            </IconButton>
+          </Link>
         </Box>
       </Toolbar>
     </AppBar>
