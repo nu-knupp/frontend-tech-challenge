@@ -1,10 +1,16 @@
 const getApiUrl = () => {
-  // In Docker environment, use the service name
+  // Check for client-side environment variables first
+  if (typeof window !== 'undefined') {
+    // Client-side: use public environment variables or fallback to localhost
+    return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001';
+  }
+  
+  // Server-side: In Docker environment, use the service name
   if (process.env.NODE_ENV === 'production' && process.env.DOCKER_ENV) {
     return 'http://json-server:3001';
   }
   
-  // For development or when API_URL is explicitly set
+  // Server-side development or when API_URL is explicitly set
   return process.env.API_URL || 'http://localhost:3001';
 };
 

@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Aplicação Next.js principal (única instância)
   nextjs-app:
@@ -9,7 +7,9 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3000
+      - DOCKER_ENV=true
       - API_URL=http://json-server:3001
+      - NEXT_PUBLIC_API_URL=http://localhost:3001
     depends_on:
       - json-server
     networks:

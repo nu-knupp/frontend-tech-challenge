@@ -6,8 +6,8 @@ Esta implementação cria uma verdadeira arquitetura de micro-frontends usando *
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    Single-SPA Shell                        │
-│                   (localhost:9000)                         │
+│                    Single-SPA Shell                         │
+│                   (localhost:9000)                          │
 │  ┌─────────────────────────────────────────────────────────┐│
 │  │              Orchestration UI                           ││
 │  │  ┌─────────────┬─────────────┬─────────────────────────┐││
