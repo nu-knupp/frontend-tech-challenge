@@ -20,7 +20,6 @@ export default function TransactionCard({
 }: TransactionCardProps) {
   return (
     <ListItem
-      key={transaction.id}
       onClick={handleSelect}
       onDoubleClick={handleDoubleClick}
       sx={{

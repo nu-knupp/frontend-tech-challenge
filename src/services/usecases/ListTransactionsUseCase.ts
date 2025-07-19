@@ -2,9 +2,20 @@ import { IListTransactionsRepository } from "@/services/interfaces/IListTransact
 import { Transaction } from "@/types/Transaction";
 
 export class ListTransactionsUseCase {
-  constructor(private repository: IListTransactionsRepository) { }
+  constructor(private repository: IListTransactionsRepository) {}
 
-  async execute(): Promise<Transaction[] | null> {
-    return this.repository.listTransactions()
+  async execute(
+    page: number,
+    limit: number,
+    sortBy: 'date' = 'date',
+    order: 'asc' | 'desc' = 'desc',
+    type?: 'credit' | 'debit'
+  ): Promise<{
+    transactions: Transaction[];
+    total: number;
+    page: number;
+    totalPages: number;
+  }> {
+    return this.repository.listTransactions(page, limit, sortBy, order, type);
   }
 }

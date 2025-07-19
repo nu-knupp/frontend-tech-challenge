@@ -4,6 +4,8 @@ import { Delete, Edit, MoreVert } from "@mui/icons-material";
 import {
   Alert,
   Box,
+  Button,
+  ButtonGroup,
   Card,
   CardContent,
   IconButton,
@@ -13,7 +15,7 @@ import {
   Snackbar,
   Typography,
 } from "@mui/material";
-import { useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import DeleteTransactionDialog from "./DeleteTransactionDialog";
 import TransactionCard from "./TransactionCard";
 import TransactionEditor from "./TransactionEditor";
@@ -22,28 +24,50 @@ export default function RecentTransactions() {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [showTransactionEditor, setShowTransactionEditor] = useState(false);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
-
-  const [selectedTransaction, setSelectedTransaction] =
-    useState<Transaction | null>(null);
-
-  const { transactions } = useTransactionStore();
-
-  const sortedTransactions = useMemo(() => {
-    return [...transactions].sort((a, b) => {
-      const dateA = new Date(a.date).getTime();
-      const dateB = new Date(b.date).getTime();
-
-      return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
-    });
-  }, [transactions, sortOrder]);
-
-  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string }>({
-    open: false,
-    message: "",
-  });
-
+  const [transactionTypeFilter, setTransactionTypeFilter] = useState<"all" | "credit" | "debit">("all");
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+  const [snackbar, setSnackbar] = useState({ open: false, message: "" });
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
   const openMenu = Boolean(anchorEl);
+
+  const {
+    transactions,
+    fetchTransactions,
+    fetchNextPage,
+    page,
+    totalPages,
+    loading,
+  } = useTransactionStore();
+
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+
+  // Fetch on first render and when filter/sort changes
+  useEffect(() => {
+    const type = transactionTypeFilter === "all" ? undefined : transactionTypeFilter;
+    fetchTransactions(1, "date", sortOrder, type);
+  }, [sortOrder, transactionTypeFilter]);
+
+  // Infinite scroll
+  useEffect(() => {
+    if (!sentinelRef.current) return;
+
+    const observer = new IntersectionObserver(
+      async ([entry]) => {
+        if (entry.isIntersecting && page < totalPages && !loading) {
+          const type = transactionTypeFilter === "all" ? undefined : transactionTypeFilter;
+          await fetchNextPage("date", sortOrder, type);
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    observer.observe(sentinelRef.current);
+
+    return () => {
+      if (sentinelRef.current) observer.unobserve(sentinelRef.current);
+    };
+  }, [page, totalPages, loading, sortOrder, transactionTypeFilter]);
 
   const handleSortChange = (order: "asc" | "desc") => {
     setSortOrder(order);
@@ -54,34 +78,17 @@ export default function RecentTransactions() {
     <>
       <Card sx={{ minWidth: 250, py: { xs: 0, sm: 1 }, px: { xs: 0, sm: 1 } }}>
         <CardContent>
-          <Box
-            display="flex"
-            justifyContent="space-between"
-            alignItems="center"
-          >
+          <Box display="flex" justifyContent="space-between" alignItems="center">
             <Typography variant="h6" sx={{ pl: ".5rem" }}>Extrato</Typography>
             <Box>
-              <IconButton
-                size="small"
-                onClick={(e) => setAnchorEl(e.currentTarget)}
-              >
+              <IconButton size="small" onClick={(e) => setAnchorEl(e.currentTarget)}>
                 <MoreVert fontSize="small" />
               </IconButton>
-              <Menu
-                anchorEl={anchorEl}
-                open={openMenu}
-                onClose={() => setAnchorEl(null)}
-              >
-                <MenuItem
-                  selected={sortOrder === "desc"}
-                  onClick={() => handleSortChange("desc")}
-                >
+              <Menu anchorEl={anchorEl} open={openMenu} onClose={() => setAnchorEl(null)}>
+                <MenuItem selected={sortOrder === "desc"} onClick={() => handleSortChange("desc")}>
                   Mais recentes
                 </MenuItem>
-                <MenuItem
-                  selected={sortOrder === "asc"}
-                  onClick={() => handleSortChange("asc")}
-                >
+                <MenuItem selected={sortOrder === "asc"} onClick={() => handleSortChange("asc")}>
                   Mais antigas
                 </MenuItem>
               </Menu>
@@ -103,13 +110,29 @@ export default function RecentTransactions() {
             </Box>
           </Box>
 
+          {/* Filtro por tipo */}
+          <Box mt={2} display="flex" justifyContent="center">
+            <ButtonGroup variant="outlined" size="small">
+              {["all", "credit", "debit"].map((type, index) => (
+                <Button
+                  key={index}
+                  variant={transactionTypeFilter === type ? "contained" : "outlined"}
+                  onClick={() => setTransactionTypeFilter(type as typeof transactionTypeFilter)}
+                >
+                  {type === "all" ? "Todos" : type === "credit" ? "Crédito" : "Débito"}
+                </Button>
+              ))}
+            </ButtonGroup>
+          </Box>
+
+          {/* Lista de transações */}
           <Box sx={{ maxHeight: 300, overflowY: "auto", mt: 2 }}>
             <List dense>
-              {sortedTransactions.map((transaction, index) => {
+              {transactions.map((transaction, index) => {
                 const isSelected = transaction.id === selectedTransaction?.id;
                 return (
                   <TransactionCard
-                    key={index}
+                    key={transaction.id}
                     isSelected={isSelected}
                     transaction={transaction}
                     handleSelect={() => setSelectedTransaction(transaction)}
@@ -117,6 +140,7 @@ export default function RecentTransactions() {
                   />
                 );
               })}
+              {page < totalPages && <div ref={sentinelRef} style={{ height: 1 }} />}
             </List>
           </Box>
         </CardContent>

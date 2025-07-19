@@ -6,13 +6,29 @@ import { formatValue } from '@/utils/currency';
 interface TransactionState {
   balance: string;
   transactions: Transaction[];
+  page: number;
+  totalPages: number;
+  loading: boolean;
   fetchBalance: () => Promise<void>;
-  fetchTransactions: () => Promise<void>;
+  fetchTransactions: (
+    page?: number,
+    sortBy?: keyof Transaction,
+    sort?: 'asc' | 'desc',
+    type?: 'credit' | 'debit'
+  ) => Promise<void>;
+  fetchNextPage: (
+    sortBy?: keyof Transaction,
+    sort?: 'asc' | 'desc',
+    type?: 'credit' | 'debit'
+  ) => Promise<void>;
   deleteTransaction: (id: string) => Promise<void>;
   createTransaction: (data: Omit<Transaction, 'id'>) => Promise<void>;
-  updateTransaction: (id: string, originalTransaction: Transaction, fieldsToUpdate: Partial<Transaction>) => Promise<void>;
+  updateTransaction: (
+    id: string,
+    originalTransaction: Transaction,
+    fieldsToUpdate: Partial<Transaction>
+  ) => Promise<void>;
 }
-
 
 export function getUpdatedFields<T extends object>(
   original: T,
@@ -37,10 +53,46 @@ export function getUpdatedFields<T extends object>(
 export const useTransactionStore = create<TransactionState>((set, get) => ({
   transactions: [],
   balance: "0",
+  page: 1,
+  totalPages: 1,
+  loading: false,
 
-  fetchTransactions: async () => {
-    const res = await api.get<Transaction[]>('/transactions');
-    set({ transactions: res.data });
+  fetchTransactions: async (
+    page = 1,
+    sortBy = 'date',
+    sort = 'desc',
+    type?: 'credit' | 'debit'
+  ) => {
+    set({ loading: true });
+
+    const res = await api.get('/transactions', {
+      params: {
+        page,
+        sortBy,
+        sort,
+        type,
+      },
+    });
+
+    const { transactions, totalPages } = res.data;
+
+    set((state) => ({
+      transactions: page === 1 ? transactions : [...state.transactions, ...transactions],
+      page,
+      totalPages,
+      loading: false,
+    }));
+  },
+
+  fetchNextPage: async (
+    sortBy = 'date',
+    sort = 'desc',
+    type?: 'credit' | 'debit'
+  ) => {
+    const { page, totalPages, loading } = get();
+    if (loading || page >= totalPages) return;
+
+    await get().fetchTransactions(page + 1, sortBy, sort, type);
   },
 
   fetchBalance: async () => {
@@ -51,22 +103,22 @@ export const useTransactionStore = create<TransactionState>((set, get) => ({
   createTransaction: async (data) => {
     await api.post('/transactions', data);
 
-    await get().fetchTransactions();
+    await get().fetchTransactions(1);
     await get().fetchBalance();
   },
 
   updateTransaction: async (id, originalTransaction, fieldsToUpdate) => {
-    const updatedTransaction = getUpdatedFields(originalTransaction, fieldsToUpdate)
+    const updatedTransaction = getUpdatedFields(originalTransaction, fieldsToUpdate);
     await api.patch(`/transactions/${id}`, updatedTransaction);
 
+    await get().fetchTransactions(1);
     await get().fetchBalance();
-    await get().fetchTransactions();
   },
 
   deleteTransaction: async (id) => {
     await api.delete(`/transactions/${id}`);
 
+    await get().fetchTransactions(1);
     await get().fetchBalance();
-    await get().fetchTransactions();
   },
 }));
