@@ -42,13 +42,11 @@ export default function RecentTransactions() {
 
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
-  // Fetch on first render and when filter/sort changes
   useEffect(() => {
     const type = transactionTypeFilter === "all" ? undefined : transactionTypeFilter;
     fetchTransactions(1, "date", sortOrder, type);
   }, [sortOrder, transactionTypeFilter]);
 
-  // Infinite scroll
   useEffect(() => {
     if (!sentinelRef.current) return;
 
