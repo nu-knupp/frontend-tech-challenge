@@ -1,3 +1,5 @@
+"use client";
+
 import { Card, Typography, IconButton, Stack } from "@mui/material";
 import { useState } from "react";
 import Visibility from "@mui/icons-material/Visibility";
@@ -5,11 +7,12 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useTransactionStore } from "@/hooks/useTransactionStore";
+import { useAuth } from "@/context/AuthContext";
 
 export default function BalanceCard() {
   const [showBalance, setShowBalance] = useState(true);
-
   const { balance } = useTransactionStore();
+  const { userName } = useAuth();
 
   const today = format(new Date(), "EEEE',' dd/MM/yyyy", {
     locale: ptBR,
@@ -26,7 +29,9 @@ export default function BalanceCard() {
         gap: 2,
       }}
     >
-      <Typography variant="h6">Olá, Joana! :)</Typography>
+      <Typography variant="h6">
+        Olá, {userName || "usuário"}! :)
+      </Typography>
       <Typography variant="body2">{today}</Typography>
 
       <Stack direction="row" justifyContent="space-between" alignItems="center">
