@@ -33,7 +33,9 @@ export default function FinancialSummary() {
     if (transactions.length === 0) {
         return (
             <Card sx={{ p: 2, textAlign: 'center' }}>
-                <Typography variant="h6" color="text.secondary">
+                <Typography
+                    variant="h6"
+                    color="text.secondary">
                     Adicione suas primeiras transações para ver as análises
                 </Typography>
             </Card>
@@ -42,22 +44,49 @@ export default function FinancialSummary() {
 
     return (
         <Box sx={{ width: "100%" }}>
-            <Typography variant="h4" sx={{ mb: 4, textAlign: "center", color: "primary.main" }}>
+            <Typography
+                variant="h4"
+                sx={{
+                    mb: 4,
+                    textAlign: "center",
+                    color: "primary.main"
+                }}>
                 Resumo Financeiro
             </Typography>
 
-            <Grid container spacing={3} justifyContent="center">
-                {/* Fluxo Líquido */}
-                <Card>
-                    <CardContent sx={{ p: 1, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
-                        <Box display="flex" alignItems="center" mb={2}>
-                            <Assessment color={analytics.netFlow >= 0 ? 'success' : 'error'} sx={{ mr: 1 }} />
-                            <Typography variant="subtitle1" fontWeight="bold">
+            <Grid container spacing={3}
+                justifyContent="center">
+                <Card
+                    sx={{
+                        width: { xs: '100%', md: 'auto' },
+                        mb: { xs: 2, md: 3 },
+                        pb: 0
+                    }}>
+                    <CardContent
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            textAlign: "center",
+                            pb: 2,
+                            mb: 0
+                        }}
+                    >
+                        <Box
+                            display="flex"
+                            alignItems="center"
+                            mb={2}>
+                            <Assessment
+                                color={analytics.netFlow >= 0 ? 'success' : 'error'}
+                                sx={{ mr: 1 }} />
+                            <Typography
+                                variant="subtitle1"
+                                fontWeight="bold">
                                 Fluxo Líquido
                             </Typography>
                         </Box>
                         <Typography
-                            variant="h4"
+                            variant="h5"
                             color={analytics.netFlow >= 0 ? 'success.main' : 'error.main'}
                             fontWeight="bold">
                             R$ {formatCurrency(analytics.netFlow)}
@@ -66,21 +95,36 @@ export default function FinancialSummary() {
                             label={analytics.netFlow >= 0 ? "Positivo" : "Negativo"}
                             color={analytics.netFlow >= 0 ? "success" : "error"}
                             size="small"
-                            sx={{ mt: 1 }} />
+                            sx={{ mt: 1, width: { xs: '60%', md: '100%' } }} />
                     </CardContent>
                 </Card>
 
-                {/* Taxa de Poupança */}
-                <Card>
-                    <CardContent sx={{ p: 1, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
-                        <Box display="flex" alignItems="center" mb={2}>
-                            <TrendingUp color="primary" sx={{ mr: 1 }} />
-                            <Typography variant="subtitle1" fontWeight="bold">
+                <Card sx={{ width: { xs: '100%', md: 'auto' }, mb: { xs: 2, md: 3 }, pb: 0 }}>
+                    <CardContent
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            textAlign: "center",
+                            pb: 2,
+                            mb: 0
+                        }}
+                    >
+                        <Box
+                            display="flex"
+                            alignItems="center"
+                            mb={2}>
+                            <TrendingUp
+                                color="primary"
+                                sx={{ mr: 1 }} />
+                            <Typography
+                                variant="subtitle1"
+                                fontWeight="bold">
                                 Taxa de Poupança
                             </Typography>
                         </Box>
                         <Typography
-                            variant="h4"
+                            variant="h5"
                             color={analytics.savingsRate >= 0 ? 'success.main' : 'error.main'}
                             fontWeight="bold">
                             {formatPercentage(analytics.savingsRate)}
@@ -93,65 +137,155 @@ export default function FinancialSummary() {
                     </CardContent>
                 </Card>
 
-                {/* Crescimento de Receitas */}
-                <Card>
-                    <CardContent sx={{ p: 1, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
-                        <Box display="flex" alignItems="center" mb={2}>
-                            <TrendingUp color="success" sx={{ mr: 1 }} />
-                            <Typography variant="subtitle1" fontWeight="bold">
+                <Card
+                    sx={{
+                        width: { xs: '100%', md: 'auto' },
+                        mb: { xs: 2, md: 3 }, pb: 0
+                    }}>
+                    <CardContent
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            textAlign: "center",
+                            pb: 2,
+                            mb: 0
+                        }}
+                    >
+                        <Box
+                            display="flex"
+                            alignItems="center"
+                            mb={2}>
+                            <TrendingUp
+                                color="success"
+                                sx={{ mr: 1 }} />
+                            <Typography
+                                variant="subtitle1"
+                                fontWeight="bold">
                                 Crescimento Receitas
                             </Typography>
                         </Box>
                         <Typography
-                            variant="h4"
+                            variant="h5"
                             color={analytics.incomeGrowth >= 0 ? 'success.main' : 'error.main'}
                             fontWeight="bold">
                             {formatPercentage(analytics.incomeGrowth)}
                         </Typography>
-                        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                        <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{ mt: 1 }}>
                             vs. mês anterior
                         </Typography>
                     </CardContent>
                 </Card>
 
-                {/* Dia Mais Ativo */}
-                <Card>
-                    <CardContent sx={{ p: 1, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
-                        <Box display="flex" alignItems="center" mb={2}>
-                            <CalendarToday color="info" sx={{ mr: 1 }} />
-                            <Typography variant="subtitle1" fontWeight="bold">
+                <Card
+                    sx={{
+                        width: { xs: '100%', md: 'auto' },
+                        mb: { xs: 2, md: 3 },
+                        pb: 0
+                    }}>
+                    <CardContent
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            textAlign: "center",
+                            pb: 2,
+                            mb: 0
+                        }}
+                    >
+                        <Box
+                            display="flex"
+                            alignItems="center"
+                            mb={2}>
+                            <CalendarToday
+                                color="info"
+                                sx={{ mr: 1 }} />
+                            <Typography
+                                variant="subtitle1"
+                                fontWeight="bold">
                                 Dia Mais Ativo
                             </Typography>
                         </Box>
-                        <Typography variant="h5" color="primary.main" fontWeight="bold">
+                        <Typography
+                            variant="h5"
+                            color="primary.main"
+                            fontWeight="bold">
                             {analytics.mostActiveDay || 'N/A'}
                         </Typography>
-                        <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                        <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{ mt: 1 }}>
                             {analytics.transactionCount} transações
                         </Typography>
                     </CardContent>
                 </Card>
 
-                {/* Resumo de Transações */}
-                <Card>
-                    <CardContent sx={{ p: 1, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
-                        <Typography variant="h6" gutterBottom>
+                <Card
+                    sx={{
+                        mb: { xs: 2, md: 3 },
+                        pb: 0
+                    }}>
+                    <CardContent
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            textAlign: "center",
+                            pb: 2,
+                            mb: 0
+                        }}
+                    >
+                        <Typography
+                            variant="h6"
+                            gutterBottom>
                             Resumo do Período
                         </Typography>
-                        <Grid container spacing={2}>
-                            <Box textAlign="center" p={2} sx={{ bgcolor: 'success.light', borderRadius: 2 }}>
-                                <Typography variant="h5" color="success.contrastText" fontWeight="bold">
+                        <Grid
+                            container spacing={2}
+                            sx={{ justifyContent: 'center' }}>
+                            <Box
+                                textAlign="center"
+                                p={2}
+                                sx={{
+                                    width: { xs: '100%', md: 'auto' },
+                                    bgcolor: 'success.light',
+                                    borderRadius: 2
+                                }}>
+                                <Typography
+                                    variant="h5"
+                                    color="success.contrastText"
+                                    fontWeight="bold">
                                     R$ {formatCurrency(analytics.totalIncome)}
                                 </Typography>
-                                <Typography variant="body2" color="success.contrastText" sx={{ mt: 1 }}>
+                                <Typography
+                                    variant="body2"
+                                    color="success.contrastText"
+                                    sx={{ mt: 1 }}>
                                     Total Receitas
                                 </Typography>
                             </Box>
-                            <Box textAlign="center" p={2} sx={{ bgcolor: 'error.light', borderRadius: 2 }}>
-                                <Typography variant="h5" color="error.contrastText" fontWeight="bold">
+                            <Box
+                                textAlign="center"
+                                p={2}
+                                sx={{
+                                    width: { xs: '100%', md: 'auto' },
+                                    bgcolor: 'error.light',
+                                    borderRadius: 2
+                                }}>
+                                <Typography
+                                    variant="h5"
+                                    color="error.contrastText"
+                                    fontWeight="bold">
                                     R$ {formatCurrency(analytics.totalExpenses)}
                                 </Typography>
-                                <Typography variant="body2" color="error.contrastText" sx={{ mt: 1 }}>
+                                <Typography
+                                    variant="body2"
+                                    color="error.contrastText"
+                                    sx={{ mt: 1 }}>
                                     Total Despesas
                                 </Typography>
                             </Box>
@@ -159,26 +293,68 @@ export default function FinancialSummary() {
                     </CardContent>
                 </Card>
 
-                {/* Maiores Transações */}
-                <Card>
-                    <CardContent sx={{ p: 1, display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center" }}>
-                        <Typography variant="h6" gutterBottom>
+                <Card
+                    sx={{
+                        mb: { xs: 2, md: 3 },
+                        pb: 0
+                    }}>
+                    <CardContent
+                        sx={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            textAlign: "center",
+                            pb: 2,
+                            mb: 0
+                        }}
+                    >
+                        <Typography
+                            variant="h6"
+                            gutterBottom>
                             Maiores Transações
                         </Typography>
-                        <Grid container spacing={2}>
-                            <Box textAlign="center" p={2} sx={{ bgcolor: 'primary.light', borderRadius: 2 }}>
-                                <Typography variant="h5" color="primary.contrastText" fontWeight="bold">
+                        <Grid
+                            container spacing={2}
+                            sx={{ justifyContent: 'center' }}>
+                            <Box
+                                textAlign="center"
+                                p={2}
+                                sx={{
+                                    width: { xs: '100%', md: 'auto' },
+                                    bgcolor: 'primary.light',
+                                    borderRadius: 2
+                                }}>
+                                <Typography
+                                    variant="h5"
+                                    color="primary.contrastText"
+                                    fontWeight="bold">
                                     R$ {formatCurrency(analytics.largestIncome)}
                                 </Typography>
-                                <Typography variant="body2" color="primary.contrastText" sx={{ mt: 1 }}>
+                                <Typography
+                                    variant="body2"
+                                    color="primary.contrastText"
+                                    sx={{ mt: 1 }}>
                                     Maior Receita
                                 </Typography>
                             </Box>
-                            <Box textAlign="center" p={2} sx={{ bgcolor: 'warning.light', borderRadius: 2 }}>
-                                <Typography variant="h5" color="warning.contrastText" fontWeight="bold">
+                            <Box
+                                textAlign="center"
+                                p={2}
+                                sx={{
+                                    width: { xs: '100%', md: 'auto' },
+                                    bgcolor: 'warning.light',
+                                    borderRadius: 2
+                                }}>
+                                <Typography
+                                    variant="h5"
+                                    color="warning.contrastText"
+                                    fontWeight="bold">
                                     R$ {formatCurrency(analytics.largestExpense)}
                                 </Typography>
-                                <Typography variant="body2" color="warning.contrastText" sx={{ mt: 1 }}>
+                                <Typography
+                                    variant="body2"
+                                    color="warning.contrastText"
+                                    sx={{ mt: 1 }}>
                                     Maior Despesa
                                 </Typography>
                             </Box>
