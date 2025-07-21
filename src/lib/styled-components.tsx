@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode, useState } from "react";
-import { ServerStyleSheet, StyleSheetManager } from "styled-components"; // Importação correta
+import { ServerStyleSheet, StyleSheetManager } from "styled-components";
 import { useServerInsertedHTML } from "next/navigation";
 
 type Props = {
