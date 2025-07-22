@@ -8,6 +8,7 @@ export type Transaction = {
   type: TransactionType;
   file?: string | null;
   fileName?: string | null;
+  categories: string[] | [];
 };
 
 export type TransactionFormInput = {

@@ -79,18 +79,6 @@ export default function RecentTransactions() {
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Typography variant="h6" sx={{ pl: ".5rem" }}>Extrato</Typography>
             <Box>
-              <IconButton size="small" onClick={(e) => setAnchorEl(e.currentTarget)}>
-                <MoreVert fontSize="small" />
-              </IconButton>
-              <Menu anchorEl={anchorEl} open={openMenu} onClose={() => setAnchorEl(null)}>
-                <MenuItem selected={sortOrder === "desc"} onClick={() => handleSortChange("desc")}>
-                  Mais recentes
-                </MenuItem>
-                <MenuItem selected={sortOrder === "asc"} onClick={() => handleSortChange("asc")}>
-                  Mais antigas
-                </MenuItem>
-              </Menu>
-
               <IconButton
                 size="small"
                 disabled={!selectedTransaction}
@@ -105,12 +93,24 @@ export default function RecentTransactions() {
               >
                 <Delete fontSize="small" />
               </IconButton>
+              <IconButton size="small" onClick={(e) => setAnchorEl(e.currentTarget)}>
+                <MoreVert fontSize="small" />
+              </IconButton>
+              <Menu anchorEl={anchorEl} open={openMenu} onClose={() => setAnchorEl(null)}>
+                <MenuItem selected={sortOrder === "desc"} onClick={() => handleSortChange("desc")}>
+                  Mais recentes
+                </MenuItem>
+                <MenuItem selected={sortOrder === "asc"} onClick={() => handleSortChange("asc")}>
+                  Mais antigas
+                </MenuItem>
+              </Menu>
             </Box>
           </Box>
 
           {/* Filtro por tipo */}
           <Box mt={2} display="flex" justifyContent="center">
             <ButtonGroup variant="outlined" size="small">
+              <>
               {["all", "credit", "debit"].map((type, index) => (
                 <Button
                   key={index}
@@ -120,12 +120,14 @@ export default function RecentTransactions() {
                   {type === "all" ? "Todos" : type === "credit" ? "Crédito" : "Débito"}
                 </Button>
               ))}
+              </>
             </ButtonGroup>
           </Box>
 
           {/* Lista de transações */}
           <Box sx={{ maxHeight: 300, overflowY: "auto", mt: 2 }}>
             <List dense>
+              <>
               {transactions.map((transaction, index) => {
                 const isSelected = transaction.id === selectedTransaction?.id;
                 return (
@@ -138,7 +140,8 @@ export default function RecentTransactions() {
                   />
                 );
               })}
-              {page < totalPages && <div ref={sentinelRef} style={{ height: 1 }} />}
+              </>
+              <>{page < totalPages && <div ref={sentinelRef} style={{ height: 1 }} />}</>
             </List>
           </Box>
         </CardContent>

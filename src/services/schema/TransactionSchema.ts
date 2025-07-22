@@ -10,6 +10,7 @@ export const TransactionSchema = z.object({
   observation: z.string().optional(),
   file: z.string().optional(),
   fileName: z.string().optional(),
+  categories: z.array(z.string()).optional(),
 });
 
 export type Transaction = z.infer<typeof TransactionSchema>;
