@@ -1,5 +1,5 @@
 import { Transaction } from "@/types/Transaction";
-import { Box, IconButton, ListItem, Typography } from "@mui/material";
+import {Box, Chip, IconButton, ListItem, Typography} from "@mui/material";
 import { formatValue } from "@/utils/currency";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -64,7 +64,7 @@ export default function TransactionCard({
               : formatValue(transaction.amount)}
           </strong>
         </Typography>
-
+        <>
         {transaction.file && (
           <IconButton
             size="small"
@@ -79,12 +79,32 @@ export default function TransactionCard({
             <SaveAltIcon fontSize="small" sx={{ color: "text.secondary" }} />
           </IconButton>
         )}
+        </>
       </Box>
-      {transaction.observation && (
-        <Typography variant="caption" sx={{ display: "block" }}>
-          Obs: {transaction.observation}
-        </Typography>
-      )}
+        <>
+            {transaction.observation && (
+                <Typography variant="caption" sx={{ display: "block" }}>
+                Obs: {transaction.observation}
+                </Typography>
+            )}
+        </>
+        <>
+            {transaction.categories.length > 0 && (
+                <Box mt={0.5} sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                    <>
+                        {transaction.categories.map((categoria) => (
+                            <Chip
+                                key={categoria}
+                                label={categoria}
+                                color="default"
+                                size="small"
+                                sx={{ textTransform: 'capitalize' }}
+                            />
+                        ))}
+                    </>
+                </Box>
+            )}
+        </>
     </ListItem>
   );
 }

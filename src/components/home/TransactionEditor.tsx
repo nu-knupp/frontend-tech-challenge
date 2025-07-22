@@ -5,7 +5,7 @@ import { Delete } from "@mui/icons-material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import {
   Box,
-  Button,
+  Button, Chip,
   Drawer,
   FormControl,
   IconButton,
@@ -19,6 +19,7 @@ import {
 import { styled } from "@mui/material/styles";
 import { format, parseISO } from "date-fns";
 import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
+import {suggestCategories} from "@/utils/category";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -51,6 +52,7 @@ export default function TransactionEditor({
   const [fileName, setFileName] = useState<string | null>(null);
   const [fileBase64, setFileBase64] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [categories, setCategories] = useState<string[] | []>([]);
 
   const { updateTransaction } = useTransactionStore();
 
@@ -64,6 +66,7 @@ export default function TransactionEditor({
 
   useEffect(() => {
     if (transaction) {
+      setCategories(transaction?.categories || []);
       setObservation(transaction?.observation as string);
       setFormattedAmount(formatValue(transaction?.amount));
       setFileBase64(transaction.file || null);
@@ -111,6 +114,7 @@ export default function TransactionEditor({
       observation,
       file: fileBase64 || '',
       fileName: fileName || '',
+      categories: categories,
     };
 
     updateTransaction(
@@ -127,6 +131,12 @@ export default function TransactionEditor({
     ) {
       e.preventDefault();
     }
+  };
+
+  const handleChangeObservations = (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    const value = e.target.value;
+    setObservation(value);
+    setCategories(suggestCategories(value));
   };
 
   return (
@@ -190,12 +200,29 @@ export default function TransactionEditor({
           <TextField
             label="Observação (opcional)"
             value={observation}
-            onChange={(e) => setObservation(e.target.value)}
+            onChange={handleChangeObservations}
             fullWidth
             multiline
             rows={2}
           />
-
+          <>
+            {categories.length > 0 && (
+                  <Box mt={0.5} sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                    <>
+                      {categories.map((categoria) => (
+                          <Chip
+                              key={categoria}
+                              label={categoria}
+                              color="primary"
+                              size="small"
+                              sx={{ textTransform: 'capitalize' }}
+                          />
+                      ))}
+                    </>
+                  </Box>
+            )}
+          </>
+          <>
           {fileBase64 && fileName ? (
             <Box
               sx={{
@@ -207,6 +234,7 @@ export default function TransactionEditor({
                 maxWidth: 350,
               }}
             >
+              <>
               {fileBase64.startsWith("data:image/") ? (
                 <Box
                   component="img"
@@ -235,6 +263,7 @@ export default function TransactionEditor({
                   📄
                 </Box>
               )}
+              </>
               <Typography variant="body2" title={fileName} noWrap>
                 {fileName}
               </Typography>
@@ -260,6 +289,7 @@ export default function TransactionEditor({
               />
             </Button>
           )}
+          </>
         </Stack>
         <Button
           onClick={handleSubmit}
