@@ -8,7 +8,7 @@ import {
   Box,
   Button,
   Card,
-  CardContent,
+  CardContent, Chip,
   FormHelperText,
   IconButton,
   MenuItem,
@@ -18,6 +18,7 @@ import {
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { ChangeEvent, KeyboardEvent, useRef, useState } from "react";
+import { suggestCategories } from "@/utils/category";
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -42,6 +43,7 @@ export default function NewTransactionForm() {
   });
   const [file, setFile] = useState<File | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [categories, setCategories] = useState<string[] | []>([]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0] || null;
@@ -82,6 +84,12 @@ export default function NewTransactionForm() {
     setFormattedAmount(formatValue(value));
   };
 
+  const handleChangeObservations = (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
+    const value = e.target.value;
+    setObservation(value);
+    setCategories(suggestCategories(value));
+  };
+
   const handleSubmit = async () => {
     const numericValue = parseFloat(
       formattedAmount.replace(/\./g, "").replace(",", ".")
@@ -116,19 +124,24 @@ export default function NewTransactionForm() {
       observation,
       file: base64File,
       fileName: file?.name || "",
+      categories: categories,
     };
 
     try {
       createTransaction(transaction);
-      setFormattedAmount("");
-      setObservation("");
-      setFile(null);
+      removeData();
       setSnackbar({ open: true, message: "Transação adicionada com sucesso!" });
     } catch (error) {
       console.error("Erro ao adicionar transação", error);
     }
   };
 
+  const removeData = () => {
+    setFormattedAmount("");
+    setObservation("");
+    setCategories([]);
+    setFile(null);
+  }
   const handleRemoveFile = () => {
     setFile(null);
     if (fileInputRef.current) {
@@ -160,15 +173,38 @@ export default function NewTransactionForm() {
           placeholder="0,00"
           fullWidth
         />
-        {error && <FormHelperText error>{error}</FormHelperText>}
+        <>{error && <FormHelperText error>{error}</FormHelperText>}</>
 
         <TextField
-          label="Observação"
-          value={observation}
-          onChange={(e) => setObservation(e.target.value)}
-          multiline
-          rows={2}
+            label="Observação (opcional)"
+            value={observation}
+            onChange={handleChangeObservations}
+            multiline
+            rows={2}
         />
+
+        <>
+          {categories.length > 0 && (
+              <Box sx={{ mt: -1.5 }}>
+                <Typography variant="caption" color="textSecondary">
+                  Categorias sugeridas:
+                </Typography>
+                <Box mt={0.5} sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+                  <>
+                  {categories.map((categoria) => (
+                      <Chip
+                          key={categoria}
+                          label={categoria}
+                          color="primary"
+                          size="small"
+                          sx={{ textTransform: 'capitalize' }}
+                      />
+                  ))}
+                  </>
+                </Box>
+              </Box>
+          )}
+        </>
 
         <Button
           component="label"
@@ -186,6 +222,7 @@ export default function NewTransactionForm() {
             multiple={false}
           />
         </Button>
+        <>
         {file && (
           <Box
             sx={{
@@ -197,6 +234,7 @@ export default function NewTransactionForm() {
               maxWidth: 350,
             }}
           >
+            <>
             {file.type.startsWith("image/") ? (
               <Box
                 component="img"
@@ -225,6 +263,7 @@ export default function NewTransactionForm() {
                 📄
               </Box>
             )}
+            </>
             <Typography variant="body2" title={file.name} noWrap>
               {file.name}
             </Typography>
@@ -233,7 +272,7 @@ export default function NewTransactionForm() {
             </IconButton>
           </Box>
         )}
-
+        </>
         <Button
           sx={{ p: 2, fontSize: "large", fontWeight: "bold" }}
           variant="contained"
