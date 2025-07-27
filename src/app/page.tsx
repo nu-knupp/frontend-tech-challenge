@@ -79,13 +79,16 @@ export default function Home() {
                   flexShrink: 0,
                   maxWidth: { xs: "100%", sm: "400px" }
                 }}>
-                <Image
-                  src="/bank-illustration.png"
+                <img
+                  src={
+                    typeof window !== "undefined"
+                      ? `${window.location.origin.includes("9000") ? "http://localhost:8080/bank-illustration.png" : "/bank-illustration.png"}`
+                      : "/bank-illustration.png"
+                  }
                   alt="Banco"
-                  fill
-                  sizes="(max-width: 600px) 100vw, 400px"
-                  style={{ objectFit: "contain" }}
-                  priority
+                  width={400}
+                  height={400}
+                  style={{ objectFit: "contain", width: "100%", maxWidth: "400px", height: "auto" }}
                 />
               </Box>
             </Box>

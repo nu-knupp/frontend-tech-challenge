@@ -4,11 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build:next": "next build",
+    "build": "next build",
     "start:next": "next start",
     "start": "webpack serve",
     "start:standalone": "webpack serve --env standalone",
-    "build": "concurrently npm:build:*",
     "build:webpack": "webpack --mode=production",
     "analyze": "webpack --mode=production --env analyze",
     "lint": "eslint src app components --ext js,ts,tsx",
