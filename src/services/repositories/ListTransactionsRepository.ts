@@ -6,13 +6,42 @@ import axios from "axios";
 export class ListTransactionsRepository implements IListTransactionsRepository {
   private readonly baseUrl = API_CONFIG.transactionsUrl;
 
-  async listTransactions(): Promise<Transaction[] | null> {
-    const response = await axios.get<Transaction[]>(this.baseUrl)
+  async listTransactions(
+    page: number,
+    limit: number,
+    sortBy: "date" = "date",
+    order: "asc" | "desc" = "desc",
+    type?: "credit" | "debit"
+  ): Promise<{
+    transactions: Transaction[];
+    total: number;
+    page: number;
+    totalPages: number;
+  }> {
+    const response = await axios.get<Transaction[]>(this.baseUrl);
 
-  const sorted = response.data.sort((a, b) => {
-    return new Date(b.date).getTime() - new Date(a.date).getTime();
-  });
+    let data = response.data;
 
-    return sorted
+    if (type) {
+      data = data.filter((t) => t.type === type);
+    }
+
+    data.sort((a, b) => {
+      const aTime = new Date(a.date).getTime();
+      const bTime = new Date(b.date).getTime();
+      return order === "asc" ? aTime - bTime : bTime - aTime;
+    });
+
+    const total = data.length;
+    const totalPages = Math.ceil(total / limit);
+    const start = (page - 1) * limit;
+    const paginated = data.slice(start, start + limit);
+
+    return {
+      transactions: paginated,
+      total,
+      page,
+      totalPages,
+    };
   }
 }

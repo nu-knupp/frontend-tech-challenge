@@ -34,7 +34,6 @@ export default function AnalyticsPage() {
 
     return (
         <LayoutContainer>
-            {/* Header */}
             <Box sx={{ mb: 2, p: 3, textAlign: "center", }}>
                 <Typography
                     variant="h4"
@@ -63,7 +62,6 @@ export default function AnalyticsPage() {
                     margin: "0 auto",
                     width: "100%"
                 }}>
-                {/* Métricas Principais */}
                 <Grid container spacing={3}>
                     <Card
                         sx={{
@@ -189,33 +187,41 @@ export default function AnalyticsPage() {
                 </Box>
 
                 {/* Gráficos */}
-                <Grid container spacing={3} justifyContent="center">
+                <Grid container spacing={3} width={'100%'}>
                     {/* Gráfico de Tendência Mensal */}
-                    <Paper sx={{ p: 3, height: "420px" }}>
-                        <Typography variant="h6" gutterBottom>
-                            Tendência Mensal
-                        </Typography>
-                        <MonthlyTrendChart data={analytics.monthlyTrends} />
-                    </Paper>
+                    <Grid size={{ md: 4 }}>
+                        <Paper sx={{ p: 3, height: "420px" }}>
+                            <Typography variant="h6" gutterBottom>
+                                Tendência Mensal
+                            </Typography>
+                            <MonthlyTrendChart data={analytics.monthlyTrends} />
+                        </Paper>
+                    </Grid>
 
                     {/* Gráfico de Categorias */}
-                    <Paper sx={{ p: 3, height: "420px" }}>
-                        <Typography variant="h6" gutterBottom>
-                            Análise por Tipo
-                        </Typography>
-                        <CategoryChart
-                            income={analytics.totalIncome}
-                            expenses={analytics.totalExpenses}
-                        />
-                    </Paper>
+                    <Grid size={{ md: 4 }}>
+
+                        <Paper sx={{ p: 3, height: "420px" }}>
+                            <Typography variant="h6" gutterBottom>
+                                Análise por Tipo
+                            </Typography>
+                            <CategoryChart
+                                income={analytics.totalIncome}
+                                expenses={analytics.totalExpenses}
+                            />
+                        </Paper>
+                    </Grid>
 
                     {/* Gráfico de Fluxo de Caixa */}
-                    <Paper sx={{ p: 3, height: "420px" }}>
-                        <Typography variant="h6" gutterBottom>
-                            Fluxo de Caixa Diário
-                        </Typography>
-                        <CashFlowChart data={analytics.dailyCashFlow} />
-                    </Paper>
+
+                    <Grid size={{ md: 4 }}>
+                        <Paper sx={{ p: 3, height: "420px" }}>
+                            <Typography variant="h6" gutterBottom>
+                                Fluxo de Caixa Diário
+                            </Typography>
+                            <CashFlowChart data={analytics.dailyCashFlow} />
+                        </Paper>
+                    </Grid>
                 </Grid>
             </Box>
         </LayoutContainer>

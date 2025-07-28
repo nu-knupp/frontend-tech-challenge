@@ -62,6 +62,7 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  matcher: ["/transactions", "/analytics"],
 };
 
 export default nextConfig;
