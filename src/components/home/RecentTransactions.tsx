@@ -111,15 +111,15 @@ export default function RecentTransactions() {
           <Box mt={2} display="flex" justifyContent="center">
             <ButtonGroup variant="outlined" size="small">
               <>
-              {["all", "credit", "debit"].map((type, index) => (
-                <Button
-                  key={index}
-                  variant={transactionTypeFilter === type ? "contained" : "outlined"}
-                  onClick={() => setTransactionTypeFilter(type as typeof transactionTypeFilter)}
-                >
-                  {type === "all" ? "Todos" : type === "credit" ? "Crédito" : "Débito"}
-                </Button>
-              ))}
+                {["all", "credit", "debit"].map((type, index) => (
+                  <Button
+                    key={index}
+                    variant={transactionTypeFilter === type ? "contained" : "outlined"}
+                    onClick={() => setTransactionTypeFilter(type as typeof transactionTypeFilter)}
+                  >
+                    {type === "all" ? "Todos" : type === "credit" ? "Crédito" : "Débito"}
+                  </Button>
+                ))}
               </>
             </ButtonGroup>
           </Box>
@@ -128,18 +128,18 @@ export default function RecentTransactions() {
           <Box sx={{ maxHeight: 300, overflowY: "auto", mt: 2 }}>
             <List dense>
               <>
-              {transactions.map((transaction, index) => {
-                const isSelected = transaction.id === selectedTransaction?.id;
-                return (
-                  <TransactionCard
-                    key={transaction.id}
-                    isSelected={isSelected}
-                    transaction={transaction}
-                    handleSelect={() => setSelectedTransaction(transaction)}
-                    handleDoubleClick={() => setShowTransactionEditor(true)}
-                  />
-                );
-              })}
+                {transactions?.map((transaction, index) => {
+                  const isSelected = transaction.id === selectedTransaction?.id;
+                  return (
+                    <TransactionCard
+                      key={transaction.id}
+                      isSelected={isSelected}
+                      transaction={transaction}
+                      handleSelect={() => setSelectedTransaction(transaction)}
+                      handleDoubleClick={() => setShowTransactionEditor(true)}
+                    />
+                  );
+                })}
               </>
               <>{page < totalPages && <div ref={sentinelRef} style={{ height: 1 }} />}</>
             </List>

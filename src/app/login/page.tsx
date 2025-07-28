@@ -8,7 +8,7 @@ import Typography from "@mui/material/Typography"
 import Link from "next/link"
 import { AccountBalance } from "@mui/icons-material"
 import api from "@/services/api"
-import { useRouter } from "next/navigation"
+// import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { useAuth } from "@/context/AuthContext"
 
@@ -17,15 +17,17 @@ export default function Login() {
     const [password, setPassword] = useState("")
     const [loading, setLoading] = useState(false)
     const [message, setMessage] = useState("")
-    const router = useRouter()
+
 
     const { isAuthenticated, setIsAuthenticated, setUserName } = useAuth()
 
     useEffect(() => {
         if (isAuthenticated) {
-            router.replace("/")
+            if (typeof window !== "undefined") {
+                window.location.href = "/"
+            }
         }
-    }, [isAuthenticated, router])
+    }, [isAuthenticated])
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -41,7 +43,9 @@ export default function Login() {
             }
 
             setIsAuthenticated(true)
-            router.push("/")
+            if (typeof window !== "undefined") {
+                window.location.href = "/"
+            }
         } catch (err) {
             setMessage("Email ou senha inválidos.")
         }

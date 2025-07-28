@@ -1,9 +1,9 @@
 "use client";
 
 import { Box, useTheme } from "@mui/material";
-import Header from "./Header";
 import Sidebar from "./Sidebar";
 import { useState } from "react";
+import Header from "@/components/layout/Header";
 
 interface LayoutContainerProps {
   children: React.ReactNode;

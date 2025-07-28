@@ -36,7 +36,7 @@ export interface FinancialAnalytics {
 
 export function useFinancialAnalytics(transactions: Transaction[]): FinancialAnalytics {
     return useMemo(() => {
-        if (!transactions.length) {
+        if (!transactions?.length) {
             return {
                 totalIncome: 0,
                 totalExpenses: 0,
@@ -65,13 +65,13 @@ export function useFinancialAnalytics(transactions: Transaction[]): FinancialAna
             .reduce((sum, t) => sum + t.amount, 0);
 
         const netFlow = totalIncome - totalExpenses;
-        const transactionCount = transactions.length;
+        const transactionCount = transactions?.length;
         const averageTransaction = transactionCount > 0 ? (totalIncome + totalExpenses) / transactionCount : 0;
 
         // Análise mensal
         const monthlyData = new Map<string, { income: number; expenses: number }>();
 
-        transactions.forEach(transaction => {
+        transactions?.forEach(transaction => {
             const monthKey = format(parseISO(transaction.date), 'MMM yyyy', { locale: ptBR });
 
             if (!monthlyData.has(monthKey)) {
@@ -102,7 +102,7 @@ export function useFinancialAnalytics(transactions: Transaction[]): FinancialAna
         let runningBalance = 0;
         const dailyCashFlow: DailyCashFlow[] = days.map(day => {
             const dayStr = format(day, 'yyyy-MM-dd');
-            const dayTransactions = transactions.filter(t => t.date.startsWith(dayStr));
+            const dayTransactions = transactions?.filter(t => t.date.startsWith(dayStr));
 
             const dayIncome = dayTransactions
                 .filter(t => t.type === 'credit')
@@ -135,20 +135,20 @@ export function useFinancialAnalytics(transactions: Transaction[]): FinancialAna
         const savingsRate = totalIncome > 0 ? (netFlow / totalIncome) * 100 : 0;
 
         // Maiores transações
-        const expenseTransactions = transactions.filter(t => t.type === 'debit');
-        const incomeTransactions = transactions.filter(t => t.type === 'credit');
+        const expenseTransactions = transactions?.filter(t => t.type === 'debit');
+        const incomeTransactions = transactions?.filter(t => t.type === 'credit');
 
-        const largestExpense = expenseTransactions.length > 0
-            ? Math.max(...expenseTransactions.map(t => t.amount))
+        const largestExpense = expenseTransactions?.length > 0
+            ? Math.max(...expenseTransactions?.map(t => t.amount))
             : 0;
 
-        const largestIncome = incomeTransactions.length > 0
-            ? Math.max(...incomeTransactions.map(t => t.amount))
+        const largestIncome = incomeTransactions?.length > 0
+            ? Math.max(...incomeTransactions?.map(t => t.amount))
             : 0;
 
         // Dia mais ativo
         const dailyActivity = new Map<string, number>();
-        transactions.forEach(transaction => {
+        transactions?.forEach(transaction => {
             const dayName = format(parseISO(transaction.date), 'EEEE', { locale: ptBR });
             dailyActivity.set(dayName, (dailyActivity.get(dayName) || 0) + 1);
         });
@@ -157,7 +157,7 @@ export function useFinancialAnalytics(transactions: Transaction[]): FinancialAna
             .sort((a, b) => b[1] - a[1])[0]?.[0] || '';
 
         // Gasto médio diário
-        const uniqueDays = new Set(transactions.map(t => t.date.split('T')[0]));
+        const uniqueDays = new Set(transactions?.map(t => t.date.split('T')[0]));
         const averageDailySpending = uniqueDays.size > 0 ? totalExpenses / uniqueDays.size : 0;
 
         return {

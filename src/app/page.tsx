@@ -1,35 +1,52 @@
-import { cookies } from 'next/headers';
+"use client";
+
+import React, { useEffect, useState } from 'react';
 import LayoutContainer from '@/components/layout/Layout';
 import FinancialSummary from '@/components/home/FinancialSummary';
 import { Transaction } from '@/types/Transaction';
 import { Box, Button, Card, Typography } from '@mui/material';
 import { Key, Receipt, Savings } from '@mui/icons-material';
-import Image from 'next/image';
 import Link from 'next/link';
+import api from '@/services/api';
+import { useAuth } from '@/context/AuthContext';
+// import { useRouter } from 'next/navigation';
 
-async function getTransactions(session: string | undefined): Promise<Transaction[]> {
-  if (!session) return [];
+export default function Home() {
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const { isAuthenticated, isAuthLoading } = useAuth();
 
-  const res = await fetch('http://localhost:3000/api/transactions', {
-    headers: {
-      Cookie: `session=${session}`,
-    },
-    cache: 'no-store',
-  });
+  useEffect(() => {
+    if (isAuthLoading) return;
+    if (!isAuthenticated) {
+      if (typeof window !== 'undefined') {
+        window.location.href = '/login';
+      }
+    } else {
+      async function fetchTransactions() {
+        try {
+          const res = await api.get('/transactions?page=1&limit=5&sort=desc');
+          if (res.data && res.data.transactions) {
+            setTransactions(res.data.transactions);
+          } else if (Array.isArray(res.data)) {
+            setTransactions(res.data);
+          } else {
+            setTransactions([]);
+          }
+        } catch (e) {
+          setTransactions([]);
+        }
+      }
+      fetchTransactions();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated, isAuthLoading]);
 
-  if (!res.ok) {
-    console.error('Erro ao buscar transações');
-    return [];
+  if (isAuthLoading) {
+    return null;
   }
-
-  return res.json();
-}
-
-export default async function Home() {
-  const cookieStore = cookies();
-  const session = (await cookieStore).get('session')?.value;
-
-  const transactions = await getTransactions(session);
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <LayoutContainer>
@@ -76,26 +93,6 @@ export default async function Home() {
               >
                 Banco Simples
               </Typography>
-              <Typography
-                variant='h5'
-                sx={{
-                  mb: 3,
-                  color: 'primary.main',
-                  textAlign: { xs: 'center', md: 'left' },
-                }}
-              >
-                Seu dinheiro. Sua maneira. Seu controle financeiro simplificado.
-              </Typography>
-              <Typography
-                variant='body1'
-                sx={{
-                  mb: 4,
-                  textAlign: { xs: 'center', md: 'left' },
-                }}
-              >
-                Gerencie suas transações financeiras de forma rápida e intuitiva.
-                Sem complicações, sem taxas escondidas. Apenas simplicidade bancária.
-              </Typography>
               <Button
                 variant='contained'
                 component={Link}
@@ -109,12 +106,12 @@ export default async function Home() {
                   fontSize: 'large',
                   fontWeight: 'bold',
                   boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
+                  mt: 2,
                 }}
               >
                 Iniciar Agora
               </Button>
             </Box>
-
             <Box
               sx={{
                 flex: 1,

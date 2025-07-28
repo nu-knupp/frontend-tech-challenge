@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+// import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -19,7 +19,7 @@ export default function Register() {
     const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState("");
-    const router = useRouter();
+
     const { setIsAuthenticated } = useAuth();
 
     const handleRegister = async (e: React.FormEvent) => {
@@ -37,7 +37,9 @@ export default function Register() {
             await api.post("/login", { email, password });
 
             setIsAuthenticated(true);
-            router.push("/");
+            if (typeof window !== "undefined") {
+                window.location.href = "/";
+            }
         } catch (err) {
             setMessage("Erro ao cadastrar. Tente novamente.");
         }

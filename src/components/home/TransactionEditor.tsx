@@ -153,6 +153,7 @@ export default function TransactionEditor(
       file: fileBase64 || '',
       fileName: fileName || '',
       categories: categories.length > 0 ? categories : ["Categoria Indefinida"],
+      date: transaction?.date || new Date().toISOString(),
     };
 
     const now = new Date();

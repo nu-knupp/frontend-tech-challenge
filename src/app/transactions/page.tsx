@@ -1,20 +1,32 @@
 "use client";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 import BalanceCard from "@/components/home/BalanceCard";
 import NewTransactionForm from "@/components/home/NewTransactionForm";
 import RecentTransactions from "@/components/home/RecentTransactions";
 import LayoutContainer from "@/components/layout/Layout";
 import { useTransactionStore } from "@/hooks/useTransactionStore";
 import Box from "@mui/material/Box";
-import { useEffect } from "react";
 
 export default function Transactions() {
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
   const { fetchTransactions, fetchBalance } = useTransactionStore();
 
   useEffect(() => {
-    fetchBalance();
-    fetchTransactions();
+    if (!isAuthenticated) {
+      router.replace("/login");
+    } else {
+      fetchBalance();
+      fetchTransactions();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isAuthenticated, router]);
+
+  if (!isAuthenticated) {
+    return null;
+  }
 
   return (
     <LayoutContainer>

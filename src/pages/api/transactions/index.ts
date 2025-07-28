@@ -29,9 +29,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ message: 'Dados inválidos', error: parseResult.error });
     }
 
+    // Garante que categories nunca seja undefined
+    const data = {
+      ...parseResult.data,
+      categories: parseResult.data.categories ?? [],
+    };
+
     const repository = new CreateTransactionRepository();
     const useCase = new CreateTransactionUseCase(repository);
-    await useCase.execute(parseResult.data);
+    await useCase.execute(data);
     return res.status(201).json({ message: 'Transação criada' });
   }
 

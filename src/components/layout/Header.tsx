@@ -6,7 +6,6 @@ import { AccountBalance } from "@mui/icons-material";
 import { AccountCircle } from "@mui/icons-material";
 import Link from "next/link";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 
 interface HeaderProps {
@@ -17,7 +16,6 @@ export default function Header({ onDrawerToggle }: HeaderProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const { isAuthenticated, setIsAuthenticated, setUserName } = useAuth();
-  const router = useRouter();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -36,10 +34,9 @@ export default function Header({ onDrawerToggle }: HeaderProps) {
     setUserName("");
     localStorage.removeItem("isAuthenticated");
     localStorage.removeItem("userName");
-    router.push("/");
+    window.location.href = "/";
     handleClose();
   };
-
 
   return (
     <AppBar
@@ -87,7 +84,7 @@ export default function Header({ onDrawerToggle }: HeaderProps) {
             {isAuthenticated ? (
               <MenuItem onClick={handleLogout}>Logout</MenuItem>
             ) : (
-              <MenuItem onClick={() => router.push("/login")}>Login</MenuItem>
+              <MenuItem onClick={() => { window.location.href = "/login"; handleClose(); }}>Login</MenuItem>
             )}
           </Menu>
         </Box>

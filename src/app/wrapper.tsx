@@ -2,7 +2,7 @@
 
 import React from 'react';
 // import { createRoot } from 'react-dom/client';
-import RootPage from './page';
+import RootPage from './login/page';
 import ThemeRegistry from '@/components/ThemeRegistry';
 
 // Wrapper component that can receive props from single-spa
