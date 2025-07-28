@@ -61,6 +61,11 @@ nvm use
 - ✅ Manipulação de datas e formatação de valores
 - ✅ Criação, listagem, edição e exclusão de transações
 - ✅ Cálculo de saldo do usuário com base nas transações
+- ✅ Performance (Cálculos memoizados, Componentes otimizados, Lazy loading)
+- ✅ Acessibilidade (Contraste adequado, Tooltips, Navegação por teclado)
+- ✅ Gráficos (Tendência Mensal, Análise por Tipo, Fluxo de Caixa)
+- ✅ Métricas Financeiras (Taxa de poupança, Crescimento de receitas/despesas, Maiores transações, Dia mais ativo, Média de gastos diários)
+- ✅ Indicadores Visuais (Cards com gradientes, Chips de status, Barras de progresso, Ícones contextuais)
 
 ---
 
