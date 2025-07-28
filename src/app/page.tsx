@@ -135,7 +135,7 @@ export default function Home() {
             </Box>
           </Box>
 
-          <Link href="/analytics" passHref legacyBehavior>
+          <Link href="/analytics" passHref>
             <Box sx={{ width: '100%', cursor: 'pointer' }}>
               <FinancialSummary />
             </Box>

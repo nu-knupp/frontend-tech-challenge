@@ -43,7 +43,7 @@ export default function Header({ onDrawerToggle }: HeaderProps) {
           <AccountBalance sx={{ ml: 1, color: 'primary.main' }} />
         </Box>
         <Box>
-          <Link href="/login" passHref legacyBehavior>
+          <Link href="/login" passHref>
             <IconButton color="primary" sx={{ ml: 2 }}>
               <AccountCircle sx={{ fontSize: 38 }} />
             </IconButton>

@@ -1,5 +1,5 @@
 import { Transaction } from "@/types/Transaction";
-import {Box, Chip, IconButton, ListItem, Typography} from "@mui/material";
+import { Box, Chip, IconButton, ListItem, Typography } from "@mui/material";
 import { formatValue } from "@/utils/currency";
 import { format, parseISO } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -65,46 +65,46 @@ export default function TransactionCard({
           </strong>
         </Typography>
         <>
-        {transaction.file && (
-          <IconButton
-            size="small"
-            onClick={(e) => {
-              e.stopPropagation();
-              const link = document.createElement("a");
-              link.href = transaction.file ?? "";
-              link.download = transaction.fileName || "arquivo";
-              link.click();
-            }}
-          >
-            <SaveAltIcon fontSize="small" sx={{ color: "text.secondary" }} />
-          </IconButton>
-        )}
+          {transaction.file && (
+            <IconButton
+              size="small"
+              onClick={(e) => {
+                e.stopPropagation();
+                const link = document.createElement("a");
+                link.href = transaction.file ?? "";
+                link.download = transaction.fileName || "arquivo";
+                link.click();
+              }}
+            >
+              <SaveAltIcon fontSize="small" sx={{ color: "text.secondary" }} />
+            </IconButton>
+          )}
         </>
       </Box>
-        <>
-            {transaction.observation && (
-                <Typography variant="caption" sx={{ display: "block" }}>
-                Obs: {transaction.observation}
-                </Typography>
-            )}
-        </>
-        <>
-            {transaction.categories.length > 0 && (
-                <Box mt={0.5} sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                    <>
-                        {transaction.categories.map((categoria) => (
-                            <Chip
-                                key={categoria}
-                                label={categoria}
-                                color="default"
-                                size="small"
-                                sx={{ textTransform: 'capitalize' }}
-                            />
-                        ))}
-                    </>
-                </Box>
-            )}
-        </>
+      <>
+        {transaction.observation && (
+          <Typography variant="caption" sx={{ display: "block" }}>
+            Obs: {transaction.observation}
+          </Typography>
+        )}
+      </>
+      <>
+        {transaction.categories?.length > 0 && (
+          <Box mt={0.5} sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
+            <>
+              {transaction.categories.map((categoria) => (
+                <Chip
+                  key={categoria}
+                  label={categoria}
+                  color="default"
+                  size="small"
+                  sx={{ textTransform: 'capitalize' }}
+                />
+              ))}
+            </>
+          </Box>
+        )}
+      </>
     </ListItem>
   );
 }
