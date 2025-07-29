@@ -40,12 +40,12 @@ export default function Transactions() {
           }}
         >
           <Box
-            sx={{ 
-              flex: { md: 3 }, 
-              display: "flex", 
-              flexDirection: "column", 
+            sx={{
+              flex: { md: 3 },
+              display: "flex",
+              flexDirection: "column",
               gap: 3,
-              width: "100%" 
+              width: "100%"
             }}
           >
             <BalanceCard />

@@ -17,6 +17,7 @@ import {
 } from "@mui/icons-material";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
 
 const drawerWidth = 240;
 
@@ -28,7 +29,8 @@ interface SidebarProps {
 export default function Sidebar({ mobileOpen, onDrawerClose }: SidebarProps) {
   const theme = useTheme();
   const pathname = usePathname();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const { isAuthenticated } = useAuth();
 
   const isActive = (path: string) => pathname === path;
 
@@ -38,16 +40,20 @@ export default function Sidebar({ mobileOpen, onDrawerClose }: SidebarProps) {
       path: "/",
       icon: <Home />,
     },
-    {
-      text: "Transações",
-      path: "/transactions",
-      icon: <Receipt />,
-    },
-    {
-      text: "Análises",
-      path: "/analytics",
-      icon: <Analytics />,
-    },
+    ...(isAuthenticated
+      ? [
+        {
+          text: "Transações",
+          path: "/transactions",
+          icon: <Receipt />,
+        },
+        {
+          text: "Análises",
+          path: "/analytics",
+          icon: <Analytics />,
+        },
+      ]
+      : []),
   ];
 
   const drawerContent = (
@@ -58,10 +64,16 @@ export default function Sidebar({ mobileOpen, onDrawerClose }: SidebarProps) {
             <ListItemButton
               sx={{
                 borderRadius: 3,
-                bgcolor: isActive(item.path) ? theme.palette.primary.main : theme.palette.background.default,
-                color: isActive(item.path) ? theme.palette.primary.contrastText : 'inherit',
-                '&:hover': {
-                  bgcolor: isActive(item.path) ? theme.palette.primary.dark : theme.palette.action.hover,
+                bgcolor: isActive(item.path)
+                  ? theme.palette.primary.main
+                  : theme.palette.background.default,
+                color: isActive(item.path)
+                  ? theme.palette.primary.contrastText
+                  : "inherit",
+                "&:hover": {
+                  bgcolor: isActive(item.path)
+                    ? theme.palette.primary.dark
+                    : theme.palette.action.hover,
                 },
               }}
               component={Link}
@@ -70,7 +82,9 @@ export default function Sidebar({ mobileOpen, onDrawerClose }: SidebarProps) {
             >
               <ListItemIcon
                 sx={{
-                  color: isActive(item.path) ? theme.palette.primary.contrastText : 'inherit',
+                  color: isActive(item.path)
+                    ? theme.palette.primary.contrastText
+                    : "inherit",
                 }}
               >
                 {item.icon}
@@ -85,18 +99,17 @@ export default function Sidebar({ mobileOpen, onDrawerClose }: SidebarProps) {
 
   return (
     <>
-      {/* Mobile drawer */}
       <Drawer
         variant="temporary"
         open={mobileOpen}
         onClose={onDrawerClose}
         ModalProps={{
-          keepMounted: true, // Better open performance on mobile
+          keepMounted: true,
         }}
         sx={{
-          display: { xs: 'block', md: 'none' },
-          '& .MuiDrawer-paper': {
-            boxSizing: 'border-box',
+          display: { xs: "block", md: "none" },
+          "& .MuiDrawer-paper": {
+            boxSizing: "border-box",
             width: drawerWidth,
             backgroundColor: "background.paper",
             borderRight: "1px solid #e0e0e0",
@@ -106,14 +119,13 @@ export default function Sidebar({ mobileOpen, onDrawerClose }: SidebarProps) {
         {drawerContent}
       </Drawer>
 
-      {/* Desktop drawer */}
       <Drawer
         variant="permanent"
         sx={{
           width: drawerWidth,
           flexShrink: 0,
-          display: { xs: 'none', md: 'block' },
-          [`& .MuiDrawer-paper`]: {
+          display: { xs: "none", md: "block" },
+          "& .MuiDrawer-paper": {
             width: drawerWidth,
             boxSizing: "border-box",
             backgroundColor: "background.paper",
