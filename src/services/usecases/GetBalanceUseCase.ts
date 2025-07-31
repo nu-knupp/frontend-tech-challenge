@@ -4,9 +4,9 @@ export class GetBalanceUseCase {
   constructor(private repository: IListTransactionsRepository) { }
 
   async execute(): Promise<number> {
-    const transactions = await this.repository.listTransactions()
+    const result = await this.repository.listTransactions(1, 10);
 
-    return (transactions ?? []).reduce((acc, transaction) => {
+    return (result.transactions ?? []).reduce((acc: number, transaction: any) => {
       return transaction.type == 'credit' ? acc + transaction.amount : acc - transaction.amount
     }, 0)
   }

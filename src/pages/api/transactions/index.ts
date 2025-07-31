@@ -31,7 +31,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const repository = new CreateTransactionRepository();
     const useCase = new CreateTransactionUseCase(repository);
-    await useCase.execute(parseResult.data);
+    await useCase.execute({
+      ...parseResult.data,
+      categories: parseResult.data.categories ?? [],
+    });
     return res.status(201).json({ message: 'Transação criada' });
   }
 

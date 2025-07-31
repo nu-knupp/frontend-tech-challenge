@@ -1,7 +1,7 @@
-import {useTransactionStore} from "@/hooks/useTransactionStore";
-import {Transaction, TransactionType} from "@/types/Transaction";
-import {formatValue, parseCurrencyString} from "@/utils/currency";
-import {Delete} from "@mui/icons-material";
+import { useTransactionStore } from "@/hooks/useTransactionStore";
+import { Transaction, TransactionType } from "@/types/Transaction";
+import { formatValue, parseCurrencyString } from "@/utils/currency";
+import { Delete } from "@mui/icons-material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import {
   Box,
@@ -16,10 +16,10 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import {styled} from "@mui/material/styles";
-import {format, parseISO} from "date-fns";
-import {ChangeEvent, KeyboardEvent, useEffect, useRef, useState} from "react";
-import {suggestCategories} from "@/utils/category";
+import { styled } from "@mui/material/styles";
+import { format, parseISO } from "date-fns";
+import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from "react";
+import { suggestCategories } from "@/utils/category";
 import DuplicateTransactionDialog from "./DuplicateTransactionDialog";
 
 const VisuallyHiddenInput = styled("input")({
@@ -58,7 +58,7 @@ export default function TransactionEditor(
   const [showDuplicateModal, setShowDuplicateModal] = useState(false);
   const [pendingTransaction, setPendingTransaction] = useState<Omit<Transaction, "id"> | null>(null);
 
-  const {transactions, updateTransaction} = useTransactionStore();
+  const { transactions, updateTransaction } = useTransactionStore();
 
   const hasntChangedSomeField =
     (parseFloat(formattedAmount.replace(/\./g, "").replace(",", ".")) ==
@@ -146,6 +146,7 @@ export default function TransactionEditor(
 
   const handleSubmit = () => {
     const numericValue = parseCurrencyString(formattedAmount)
+    const now = new Date();
     const fieldsToUpdate = {
       type,
       amount: numericValue,
@@ -153,9 +154,9 @@ export default function TransactionEditor(
       file: fileBase64 || '',
       fileName: fileName || '',
       categories: categories.length > 0 ? categories : ["Categoria Indefinida"],
+      date: transaction?.date || now.toISOString(),
     };
 
-    const now = new Date();
     if (isDuplicateTransaction(transactions, type, numericValue, now, fieldsToUpdate.categories, transaction?.id)) {
       setPendingTransaction(fieldsToUpdate);
       setShowDuplicateModal(true);
@@ -247,7 +248,7 @@ export default function TransactionEditor(
               value={formattedAmount || transaction?.amount}
               onKeyDown={handleKeyDown}
               onChange={handleChange}
-              InputProps={{startAdornment: <span>R$&nbsp;</span>}}
+              InputProps={{ startAdornment: <span>R$&nbsp;</span> }}
             />
 
             <TextField
@@ -270,7 +271,7 @@ export default function TransactionEditor(
             />
             <>
               {categories.length > 0 && (
-                <Box mt={0.5} sx={{display: 'flex', gap: 1, flexWrap: 'wrap'}}>
+                <Box mt={0.5} sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
                   <>
                     {categories.map((categoria) => (
                       <Chip
@@ -278,7 +279,7 @@ export default function TransactionEditor(
                         label={categoria}
                         color="primary"
                         size="small"
-                        sx={{textTransform: 'capitalize'}}
+                        sx={{ textTransform: 'capitalize' }}
                       />
                     ))}
                   </>
@@ -331,7 +332,7 @@ export default function TransactionEditor(
                     {fileName}
                   </Typography>
                   <IconButton size="small" color="error" onClick={handleRemoveFile}>
-                    <Delete fontSize="small"/>
+                    <Delete fontSize="small" />
                   </IconButton>
                 </Box>
               ) : (
@@ -340,8 +341,8 @@ export default function TransactionEditor(
                   role={undefined}
                   variant="outlined"
                   tabIndex={-1}
-                  startIcon={<CloudUploadIcon/>}
-                  sx={{p: 3}}
+                  startIcon={<CloudUploadIcon />}
+                  sx={{ p: 3 }}
                 >
                   upload de Arquivo
                   <VisuallyHiddenInput
@@ -359,7 +360,7 @@ export default function TransactionEditor(
             variant="contained"
             fullWidth
             disabled={hasntChangedSomeField}
-            sx={{fontWeight: "bold", fontSize: "large", p: 1.5}}
+            sx={{ fontWeight: "bold", fontSize: "large", p: 1.5 }}
           >
             Salvar Alterações
           </Button>
