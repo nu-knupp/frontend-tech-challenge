@@ -1,0 +1,68 @@
+services:
+  nextjs:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nextjs-app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./db:/app/db
+    command: ["node", "server.js"]
+    networks:
+      - mfe-net
+
+  analytics:
+    build:
+      context: ./apps/analytics
+      dockerfile: Dockerfile
+    container_name: analytics-mfe
+    ports:
+      - "8080:8080"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - mfe-net
+
+  json-server:
+    image: node:20-alpine
+    container_name: json-server
+    working_dir: /app
+    volumes:
+      - ./db:/app/db
+      - ./scripts:/app/scripts
+      - ./package.json:/app/package.json
+    command: >
+      sh -c "
+        npm install -g json-server &&
+        node scripts/initServerJson.js &&
+        json-server --watch db/users.json db/server.json --port 3001 --host 0.0.0.0
+      "
+    ports:
+      - "3001:3001"
+    networks:
+      - mfe-net
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3001/transactions"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+  nginx:
+    image: nginx:1.25
+    container_name: mfe-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - nextjs
+      - analytics
+      - json-server
+    networks:
+      - mfe-net
+
+networks:
+  mfe-net:
+    driver: bridge

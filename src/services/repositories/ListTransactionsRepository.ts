@@ -1,9 +1,10 @@
 import { IListTransactionsRepository } from "@/services/interfaces/IListTransactionsRepository";
 import { Transaction } from "@/types/Transaction";
 import axios from "axios";
+import { API_BASE_URL } from "../../config/api";
 
 export class ListTransactionsRepository implements IListTransactionsRepository {
-  private readonly baseUrl = "http://localhost:3001/transactions";
+  private readonly baseUrl = `${API_BASE_URL}/transactions`;
 
   async listTransactions(
     page: number,
