@@ -34,7 +34,6 @@ export const AuthProvider = ({
   const [userName, setUserName] = useState(initialAuth.userName);
 
   useEffect(() => {
-    // Sincroniza com localStorage
     if (!userName) {
       const stored = localStorage.getItem("userName");
       if (stored) setUserName(stored);
