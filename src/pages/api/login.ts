@@ -13,7 +13,9 @@ function readUsers() {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  const origin = req.headers.origin || '*';
+  res.setHeader('Access-Control-Allow-Origin', origin);
+  res.setHeader('Vary', 'Origin');
   res.setHeader('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Origin, Content-Type, Accept, Authorization');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
@@ -44,10 +46,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(401).json({ error: "Email ou senha inválidos" });
   }
 
+  // Set cookie with appropriate settings for Nginx proxy
+  const isProd = process.env.NODE_ENV === 'production';
+  const isNginxProxy = req.headers['x-forwarded-for'] || req.headers['x-real-ip'];
+  const host = req.headers.host || 'localhost';
+  
   const sessionCookie = serialize("session", email, {
     path: "/",
     httpOnly: true,
     maxAge: 60 * 60 * 24, // 1 dia
+    sameSite: isNginxProxy ? 'lax' : (isProd ? 'none' : 'lax'),
+    secure: !isNginxProxy && isProd,
+    domain: isNginxProxy && host.includes('localhost') ? 'localhost' : undefined,
   });
   res.setHeader("Set-Cookie", sessionCookie);
 

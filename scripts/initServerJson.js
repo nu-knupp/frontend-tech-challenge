@@ -1,34 +1,47 @@
 import fs from "fs";
 import path from "path";
 
-
-const serverFilePath = path.resolve("db", "server.json");
+const dbFilePath = path.resolve("db", "db.json");
 const usersFilePath = path.resolve("db", "users.json");
+const serverFilePath = path.resolve("db", "server.json");
 
-fs.mkdirSync(path.dirname(serverFilePath), { recursive: true });
+fs.mkdirSync(path.dirname(dbFilePath), { recursive: true });
 
-if (!fs.existsSync(serverFilePath)) {
-  const initialContent = { transactions: [] };
-  fs.writeFileSync(serverFilePath, JSON.stringify(initialContent, null, 2));
+// Ler dados existentes se disponíveis
+let existingUsers = [];
+let existingTransactions = [];
+
+if (fs.existsSync(usersFilePath)) {
   try {
-    fs.chmodSync(serverFilePath, 0o666);
+    const usersData = fs.readFileSync(usersFilePath, 'utf8');
+    existingUsers = JSON.parse(usersData);
+    console.log("ℹ️  Dados de users.json carregados");
   } catch (e) {
-    console.warn('Não foi possível definir permissão 666 para server.json:', e.message);
+    console.warn('Erro ao ler users.json:', e.message);
   }
-  console.log("✅ server.json criado com sucesso em:", serverFilePath);
-} else {
-  console.log("ℹ️  server.json já existe em:", serverFilePath);
 }
 
-if (!fs.existsSync(usersFilePath)) {
-  const initialUsers = [];
-  fs.writeFileSync(usersFilePath, JSON.stringify(initialUsers, null, 2));
+if (fs.existsSync(serverFilePath)) {
   try {
-    fs.chmodSync(usersFilePath, 0o666);
+    const serverData = fs.readFileSync(serverFilePath, 'utf8');
+    const parsed = JSON.parse(serverData);
+    existingTransactions = parsed.transactions || [];
+    console.log("ℹ️  Dados de server.json carregados");
   } catch (e) {
-    console.warn('Não foi possível definir permissão 666 para users.json:', e.message);
+    console.warn('Erro ao ler server.json:', e.message);
   }
-  console.log("✅ users.json criado com sucesso em:", usersFilePath);
-} else {
-  console.log("ℹ️  users.json já existe em:", usersFilePath);
 }
+
+// Criar arquivo db.json unificado
+const dbContent = {
+  users: existingUsers,
+  transactions: existingTransactions
+};
+
+fs.writeFileSync(dbFilePath, JSON.stringify(dbContent, null, 2));
+try {
+  fs.chmodSync(dbFilePath, 0o666);
+} catch (e) {
+  console.warn('Não foi possível definir permissão 666 para db.json:', e.message);
+}
+console.log("✅ db.json criado com sucesso em:", dbFilePath);

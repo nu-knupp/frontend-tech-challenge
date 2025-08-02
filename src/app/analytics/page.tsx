@@ -42,7 +42,7 @@ export default function AnalyticsPage() {
                         color: "primary.main",
                         mb: 1
                     }}>
-                    Análises Financeiras
+                    NÃO É ESTE
                 </Typography>
                 <Typography variant="body1" color="text.secondary">
                     Visão detalhada do seu desempenho financeiro

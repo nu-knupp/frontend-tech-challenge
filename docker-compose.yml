@@ -8,6 +8,8 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
+      - API_BASE_URL=http://json-server:3001
+      - NEXT_PUBLIC_API_BASE_URL=http://json-server:3001
     volumes:
       - ./db:/app/db
     command: ["node", "server.js"]
@@ -23,6 +25,7 @@ services:
       - "8080:8080"
     environment:
       - NODE_ENV=production
+      - API_BASE_URL=http://json-server:3001
     networks:
       - mfe-net
 
@@ -38,7 +41,7 @@ services:
       sh -c "
         npm install -g json-server &&
         node scripts/initServerJson.js &&
-        json-server --watch db/users.json db/server.json --port 3001 --host 0.0.0.0
+        json-server --watch db/db.json --port 3001 --host 0.0.0.0
       "
     ports:
       - "3001:3001"

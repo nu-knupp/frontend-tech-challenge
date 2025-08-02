@@ -4,7 +4,6 @@ import { TransactionSchema } from '@/services/schema/TransactionSchema';
 import { CreateTransactionUseCase } from '@/services/usecases/CreateTransactionUseCase';
 import { ListTransactionsUseCase } from '@/services/usecases/ListTransactionsUseCase';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { Transaction } from '@/types/Transaction';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*');
