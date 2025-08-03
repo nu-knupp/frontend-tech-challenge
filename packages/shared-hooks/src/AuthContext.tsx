@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 
 type AuthContextType = {
   isAuthenticated: boolean;
@@ -38,38 +38,6 @@ export const AuthProvider = ({
   const [isAuthenticated, setIsAuthenticated] = useState(initialAuth.isAuthenticated);
   const [userName, setUserName] = useState(initialAuth.userName);
 
-  useEffect(() => {
-    // Sincroniza com localStorage no lado cliente apenas na primeira vez
-    if (typeof window !== 'undefined') {
-      const storedAuth = localStorage.getItem("isAuthenticated");
-      const storedUserName = localStorage.getItem("userName");
-
-      if (storedAuth && !isAuthenticated) {
-        setIsAuthenticated(JSON.parse(storedAuth));
-      }
-
-      if (storedUserName && !userName) {
-        setUserName(storedUserName);
-      }
-    }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem("isAuthenticated", JSON.stringify(isAuthenticated));
-    }
-  }, [isAuthenticated]);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      if (userName) {
-        localStorage.setItem("userName", userName);
-      } else {
-        localStorage.removeItem("userName");
-      }
-    }
-  }, [userName]);
-
   const logout = async () => {
     try {
       await fetch("/api/logout", { method: "POST" });
@@ -80,9 +48,9 @@ export const AuthProvider = ({
     setIsAuthenticated(false);
     setUserName("");
 
+    // Redirecionar para home após logout
     if (typeof window !== 'undefined') {
-      localStorage.removeItem("isAuthenticated");
-      localStorage.removeItem("userName");
+      window.location.href = '/';
     }
   };
 

@@ -8,7 +8,7 @@ fs.mkdirSync(path.dirname(serverFilePath), { recursive: true });
 
 // Estrutura padrão para server.json
 const defaultServerData = {
-  balance: 0,
+  balance: [{ value: 0 }], // json-server precisa de array ou objeto
   transactions: []
 };
 
@@ -23,7 +23,7 @@ if (fs.existsSync(serverFilePath)) {
     const parsedData = JSON.parse(fileContent);
     // Garante que as propriedades obrigatórias existem
     serverData = {
-      balance: parsedData.balance || 0,
+      balance: Array.isArray(parsedData.balance) ? parsedData.balance : [{ value: parsedData.balance || 0 }],
       transactions: parsedData.transactions || [],
       ...parsedData // Preserva outras propriedades existentes
     };
@@ -65,7 +65,7 @@ const combinedData = {
 fs.writeFileSync(serverFilePath, JSON.stringify(combinedData, null, 2));
 console.log("✅ Dados combinados salvos em server.json");
 console.log("📊 Estrutura final:", {
-  balance: combinedData.balance,
+  balance: combinedData.balance.length ? combinedData.balance[0].value : 0,
   transactions: combinedData.transactions.length + " transações",
   users: combinedData.users.length + " usuários"
 });

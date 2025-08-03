@@ -1,12 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+const PROTECTED_PATHS = ['/transactions', '/analytics'];
+
 export function middleware(request: NextRequest) {
-  // Para desenvolvimento, apenas continue - os rewrites no next.config.js cuidarão do roteamento
-  if (process.env.NODE_ENV === 'development') {
-    return NextResponse.next();
+  const session = request.cookies.get('session');
+  const { pathname } = request.nextUrl;
+
+  const isProtected = PROTECTED_PATHS.some((path) =>
+    pathname.startsWith(path)
+  );
+
+  if (isProtected && !session) {
+    const loginUrl = new URL('/login', request.url);
+    return NextResponse.redirect(loginUrl);
   }
 
-  // Para produção, você pode adicionar lógica específica aqui
   return NextResponse.next();
 }
 

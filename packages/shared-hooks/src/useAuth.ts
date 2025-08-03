@@ -1,5 +1,5 @@
 'use client'
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 export interface AuthState {
   isAuthenticated: boolean;
@@ -19,38 +19,6 @@ export function useAuth(initialAuth?: AuthState): UseAuthReturn {
   );
   const [userName, setUserName] = useState(initialAuth?.userName ?? "");
 
-  useEffect(() => {
-    // Sincroniza com localStorage no lado cliente apenas na primeira vez
-    if (typeof window !== 'undefined') {
-      const storedAuth = localStorage.getItem("isAuthenticated");
-      const storedUserName = localStorage.getItem("userName");
-      
-      if (storedAuth && !isAuthenticated) {
-        setIsAuthenticated(JSON.parse(storedAuth));
-      }
-      
-      if (storedUserName && !userName) {
-        setUserName(storedUserName);
-      }
-    }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      localStorage.setItem("isAuthenticated", JSON.stringify(isAuthenticated));
-    }
-  }, [isAuthenticated]);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      if (userName) {
-        localStorage.setItem("userName", userName);
-      } else {
-        localStorage.removeItem("userName");
-      }
-    }
-  }, [userName]);
-
   const logout = async () => {
     try {
       await fetch("/api/logout", { method: "POST" });
@@ -61,9 +29,9 @@ export function useAuth(initialAuth?: AuthState): UseAuthReturn {
     setIsAuthenticated(false);
     setUserName("");
     
+    // Redirecionar para home após logout
     if (typeof window !== 'undefined') {
-      localStorage.removeItem("isAuthenticated");
-      localStorage.removeItem("userName");
+      window.location.href = '/';
     }
   };
 

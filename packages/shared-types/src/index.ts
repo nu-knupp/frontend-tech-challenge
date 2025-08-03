@@ -9,6 +9,7 @@ export type Transaction = {
   file?: string | null;
   fileName?: string | null;
   categories: string[] | [];
+  userEmail?: string; // Email do usuário que criou a transação
 };
 
 export type TransactionFormInput = {

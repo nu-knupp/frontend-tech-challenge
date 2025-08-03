@@ -106,6 +106,9 @@ WORKDIR /app
 # Install json-server globally
 RUN npm install -g json-server
 
+# Create public directory for json-server
+RUN mkdir -p public
+
 # Copy database files
 COPY db/ ./db/
 COPY scripts/initServerJson.js ./scripts/

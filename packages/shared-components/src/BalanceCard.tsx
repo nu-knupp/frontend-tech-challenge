@@ -6,11 +6,12 @@ import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
-import { useTransactionStore } from "@banking/shared-hooks";
+import { useTransactionStore, useAuthContext } from "@banking/shared-hooks";
 
 export default function BalanceCard() {
   const [showBalance, setShowBalance] = useState(true);
   const { balance } = useTransactionStore();
+  const { userName } = useAuthContext();
 
   const today = format(new Date(), "EEEE',' dd/MM/yyyy", {
     locale: ptBR,
@@ -28,7 +29,7 @@ export default function BalanceCard() {
       }}
     >
       <Typography variant="h6">
-        Olá, usuário! :)
+        Olá, {userName || "usuário"}! :)
       </Typography>
       <Typography variant="body2">{today}</Typography>
 

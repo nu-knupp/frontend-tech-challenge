@@ -43,8 +43,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       path: "/",
       httpOnly: true,
       maxAge: 60 * 60 * 24, // 1 dia
+      sameSite: "lax",
+      secure: false, // true para HTTPS em produção
     });
-    res.setHeader("Set-Cookie", sessionCookie);
+
+    const userNameCookie = serialize("userName", user.firstName, {
+      path: "/",
+      httpOnly: true,
+      maxAge: 60 * 60 * 24, // 1 dia
+      sameSite: "lax",
+      secure: false, // true para HTTPS em produção
+    });
+
+    res.setHeader("Set-Cookie", [sessionCookie, userNameCookie]);
 
     return res.status(200).json({
       message: "Login realizado com sucesso",

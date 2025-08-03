@@ -9,6 +9,12 @@ import { Transaction } from '@banking/shared-types';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // Verificar autenticação
+  const session = req.cookies.session;
+  if (!session) {
+    return res.status(401).json({ error: 'Não autorizado' });
+  }
+
   if (req.method === 'GET') {
     const { page = "1", limit = "10", sort = "desc", type } = req.query;
 
@@ -21,7 +27,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const useCase = new ListTransactionsUseCase(repository);
     const result = await useCase.execute(pageNumber, limitNumber, 'date', sortOrder, transactionType);
 
-    return res.status(200).json(result);
+    // Filtrar transações por usuário (usando email como identificador)
+    const userTransactions = result.transactions.filter(
+      (transaction: any) => transaction.userEmail === session
+    );
+
+    return res.status(200).json({
+      ...result,
+      transactions: userTransactions,
+      total: userTransactions.length,
+      totalPages: Math.ceil(userTransactions.length / limitNumber)
+    });
   }
 
   if (req.method === 'POST') {
@@ -31,9 +47,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ message: 'Dados inválidos', error: parseResult.error });
     }
 
+    // Adicionar email do usuário à transação
+    const transactionWithUser = {
+      ...parseResult.data,
+      userEmail: session
+    };
+
     const repository = new CreateTransactionRepository();
     const useCase = new CreateTransactionUseCase(repository);
-    await useCase.execute(parseResult.data);
+    await useCase.execute(transactionWithUser);
     return res.status(201).json({ message: 'Transação criada' });
   }
 

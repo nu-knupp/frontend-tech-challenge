@@ -5,7 +5,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { AccountBalance, AccountCircle } from "@mui/icons-material";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@banking/shared-hooks";
+import { useAuthContext } from "@banking/shared-hooks";
 
 interface HeaderProps {
   onDrawerToggle?: () => void;
@@ -16,7 +16,7 @@ interface HeaderProps {
 export default function Header({ onDrawerToggle, title = "Banco Simples", actions }: HeaderProps) {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-  const { isAuthenticated, setIsAuthenticated, setUserName } = useAuth();
+  const { isAuthenticated, userName, logout } = useAuthContext();
   const router = useRouter();
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -31,12 +31,7 @@ export default function Header({ onDrawerToggle, title = "Banco Simples", action
   };
 
   const handleLogout = async () => {
-    await fetch("/api/logout");
-    setIsAuthenticated(false);
-    setUserName("");
-    localStorage.removeItem("isAuthenticated");
-    localStorage.removeItem("userName");
-    router.push("/");
+    await logout(); // Usa o método logout do AuthContext que já faz tudo
     handleClose();
   };
 
@@ -84,9 +79,14 @@ export default function Header({ onDrawerToggle, title = "Banco Simples", action
             anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             transformOrigin={{ vertical: 'top', horizontal: 'right' }}
           >
-            {isAuthenticated ? (
-              <MenuItem onClick={handleLogout}>Logout</MenuItem>
-            ) : (
+            {isAuthenticated ? [
+              <MenuItem key="username" disabled>
+                <Typography variant="body2" color="text.secondary">
+                  Olá, {userName || "Usuário"}!
+                </Typography>
+              </MenuItem>,
+              <MenuItem key="logout" onClick={handleLogout}>Logout</MenuItem>
+            ] : (
               <MenuItem onClick={() => router.push("/login")}>Login</MenuItem>
             )}
           </Menu>

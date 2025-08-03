@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const PROTECTED_PATHS = ['/dashboard/transactions', '/dashboard/analytics'];
+const PROTECTED_PATHS = ['/transactions', '/analytics'];
 
 export function middleware(request: NextRequest) {
   const session = request.cookies.get('session');
@@ -11,7 +11,9 @@ export function middleware(request: NextRequest) {
   );
 
   if (isProtected && !session) {
-    const loginUrl = new URL('http://localhost:3000/login');
+    // Redirecionar para o banking app (onde está o login)
+    const loginUrl = new URL('/login', request.url);
+    loginUrl.port = '3000'; // Porta do banking app
     return NextResponse.redirect(loginUrl);
   }
 
@@ -19,5 +21,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/transactions/:path*', '/dashboard/analytics/:path*'],
+  matcher: ['/transactions/:path*', '/analytics/:path*'],
 };
