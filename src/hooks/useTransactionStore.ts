@@ -14,12 +14,20 @@ interface TransactionState {
     page?: number,
     sortBy?: keyof Transaction,
     sort?: 'asc' | 'desc',
-    type?: 'credit' | 'debit'
+    type?: 'credit' | 'debit',
+    category?: string[],
+    q?: string,
+    startDate?: string,
+    endDate?: string
   ) => Promise<void>;
   fetchNextPage: (
     sortBy?: keyof Transaction,
     sort?: 'asc' | 'desc',
-    type?: 'credit' | 'debit'
+    type?: 'credit' | 'debit',
+    category?: string[],
+    q?: string,
+    startDate?: string,
+    endDate?: string
   ) => Promise<void>;
   deleteTransaction: (id: string) => Promise<void>;
   createTransaction: (data: Omit<Transaction, 'id'>) => Promise<void>;
@@ -61,7 +69,11 @@ export const useTransactionStore = create<TransactionState>((set, get) => ({
     page = 1,
     sortBy = 'date',
     sort = 'desc',
-    type?: 'credit' | 'debit'
+    type,
+    category,
+    q,
+    startDate,
+    endDate
   ) => {
     set({ loading: true });
 
@@ -71,10 +83,35 @@ export const useTransactionStore = create<TransactionState>((set, get) => ({
         sortBy,
         sort,
         type,
+        category,
+        q,
+        startDate,
+        endDate,
       },
+      paramsSerializer: (params) => {
+        const searchParams = new URLSearchParams();
+        Object.entries(params).forEach(([key, value]) => {
+          if (Array.isArray(value)) {
+            value.forEach((v) => searchParams.append(key, v));
+          } else if (value !== undefined && value !== null) {
+            searchParams.append(key, String(value));
+          }
+        });
+        return searchParams.toString();
+      }
     });
 
-    const { transactions, totalPages } = res.data;
+    let { transactions, totalPages } = res.data;
+
+    if (category?.includes("Outros")) {
+      const knownCategories = category.filter((c) => c !== "Outros");
+      transactions = transactions.filter((t: Transaction) => {
+        const hasKnown = t.categories?.some(cat =>
+          knownCategories.includes(cat)
+        );
+        return !hasKnown;
+      });
+    }
 
     set((state) => ({
       transactions: page === 1 ? transactions : [...state.transactions, ...transactions],
@@ -87,12 +124,16 @@ export const useTransactionStore = create<TransactionState>((set, get) => ({
   fetchNextPage: async (
     sortBy = 'date',
     sort = 'desc',
-    type?: 'credit' | 'debit'
+    type,
+    category,
+    q,
+    startDate,
+    endDate
   ) => {
     const { page, totalPages, loading } = get();
     if (loading || page >= totalPages) return;
 
-    await get().fetchTransactions(page + 1, sortBy, sort, type);
+    await get().fetchTransactions(page + 1, sortBy, sort, type, category, q, startDate, endDate);
   },
 
   fetchBalance: async () => {
@@ -102,7 +143,6 @@ export const useTransactionStore = create<TransactionState>((set, get) => ({
 
   createTransaction: async (data) => {
     await api.post('/transactions', data);
-
     await get().fetchTransactions(1);
     await get().fetchBalance();
   },
@@ -110,14 +150,12 @@ export const useTransactionStore = create<TransactionState>((set, get) => ({
   updateTransaction: async (id, originalTransaction, fieldsToUpdate) => {
     const updatedTransaction = getUpdatedFields(originalTransaction, fieldsToUpdate);
     await api.patch(`/transactions/${id}`, updatedTransaction);
-
     await get().fetchTransactions(1);
     await get().fetchBalance();
   },
 
   deleteTransaction: async (id) => {
     await api.delete(`/transactions/${id}`);
-
     await get().fetchTransactions(1);
     await get().fetchBalance();
   },

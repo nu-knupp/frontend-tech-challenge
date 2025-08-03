@@ -7,15 +7,31 @@ export class ListTransactionsUseCase {
   async execute(
     page: number,
     limit: number,
-    sortBy: 'date' = 'date',
-    order: 'asc' | 'desc' = 'desc',
-    type?: 'credit' | 'debit'
+    sortBy: "date" = "date",
+    order: "asc" | "desc" = "desc",
+    type?: "credit" | "debit",
+    category?: string[],
+    q?: string,
+    startDate?: string,
+    endDate?: string,
+    includeUncategorized?: boolean
   ): Promise<{
     transactions: Transaction[];
     total: number;
     page: number;
     totalPages: number;
   }> {
-    return this.repository.listTransactions(page, limit, sortBy, order, type);
+    return this.repository.listTransactions(
+      page,
+      limit,
+      sortBy,
+      order,
+      type,
+      category,
+      q,
+      startDate,
+      endDate,
+      includeUncategorized
+    );
   }
 }

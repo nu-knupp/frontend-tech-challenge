@@ -6,7 +6,12 @@ export interface IListTransactionsRepository {
     limit: number,
     sortBy?: "date",
     order?: "asc" | "desc",
-    type?: "credit" | "debit"
+    type?: "credit" | "debit",
+    category?: string[],
+    q?: string,
+    startDate?: string,
+    endDate?: string,
+    includeUncategorized?: boolean
   ): Promise<{
     transactions: Transaction[];
     total: number;
