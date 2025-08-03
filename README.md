@@ -21,22 +21,36 @@ Esta aplicação representa uma evolução completa do projeto original, aplican
 
 ### **Multi-Zone Architecture com Next.js**
 
-O projeto implementa uma arquitetura de microfrontends utilizando **Next.js Multi-Zones**, dividindo a aplicação em dois apps independentes que podem ser desenvolvidos, deployados e escalados separadamente:
+O projeto implementa uma arquitetura de microfrontends utilizando **Next.js Multi-Zones**, dividindo a aplicação em dois apps independentes que podem ser desenvolvidos, deployados e escalados separadamente, com **NGINX** como proxy reverso:
 
 ```
-┌─────────────────┐    ┌─────────────────┐
-│   Banking App   │    │  Dashboard App  │
-│   (Shell)       │    │  (Microfront)   │
-│   Port: 3000    │◄──►│   Port: 3001    │
-└─────────────────┘    └─────────────────┘
-          │                       │
-          └───────────┬───────────┘
-                      │
-          ┌─────────────────┐
-          │  Shared Packages│
-          │  (@banking/*)   │
-          └─────────────────┘
+                    ┌─────────────────┐
+                    │      NGINX      │
+                    │ (Proxy Reverso) │
+                    │   Port: 80/443  │
+                    └─────────┬───────┘
+                              │
+              ┌───────────────┼───────────────┐
+              │               │               │
+              ▼               ▼               ▼
+┌─────────────────┐    ┌─────────────────┐   ┌─────────────────┐
+│   Banking App   │    │  Dashboard App  │   │   JSON Server   │
+│   (Shell)       │    │  (Microfront)   │   │  (Mock API)     │
+│   Port: 3000    │    │   Port: 3001    │   │   Port: 3002    │
+└─────────┬───────┘    └─────────┬───────┘   └─────────────────┘
+          │                      │
+          └──────────┬───────────┘
+                     │
+         ┌─────────────────┐
+         │  Shared Packages│
+         │  (@banking/*)   │
+         └─────────────────┘
 ```
+
+### **NGINX (Proxy Reverso - Port 80/443)**
+- **Responsabilidades**: Roteamento inteligente, proxy reverso, SSL termination
+- **Funcionalidades**: Proxy reverso, compressão Gzip, headers de segurança
+- **Roteamento**: Direciona requests para os microfrontends corretos baseado na URL
 
 ### **Banking App (Shell - Port 3000)**
 - **Responsabilidades**: Autenticação, páginas principais, roteamento
@@ -221,6 +235,53 @@ docker-compose -f docker-compose.prod.yml build
 docker-compose -f docker-compose.prod.yml up
 ```
 
+### **🐳 Scripts de Deploy Automatizado**
+
+O projeto inclui scripts automatizados para facilitar o deploy em produção:
+
+#### **Build e Publicação no Docker Hub**
+```bash
+# Script para buildar e publicar todas as imagens
+./scripts/build-and-push.sh <seu_usuario_docker_hub>
+
+# Exemplo:
+./scripts/build-and-push.sh johndoe
+```
+
+**O que o script faz:**
+- ✅ **Build das imagens**: Constrói imagens para banking, dashboard, nginx e json-server
+- ✅ **Tag das versões**: Aplica tags `latest` e específicas por versão
+- ✅ **Push para Docker Hub**: Publica todas as imagens no registry
+- ✅ **Verificação**: Confirma se todas as imagens foram publicadas corretamente
+
+#### **Deploy em Produção**
+```bash
+# Script para deploy automático baixando imagens do Docker Hub
+./scripts/deploy-prod.sh <seu_usuario_docker_hub>
+
+# Exemplo:
+./scripts/deploy-prod.sh johndoe
+```
+
+**O que o script faz:**
+- ✅ **Download das imagens**: Baixa automaticamente as imagens mais recentes do Docker Hub
+- ✅ **Parada segura**: Para containers existentes sem perda de dados
+- ✅ **Deploy atualizado**: Inicia os novos containers com as imagens atualizadas
+- ✅ **Health Check**: Verifica se todos os serviços estão funcionando
+- ✅ **Logs**: Exibe status e logs dos containers
+
+#### **Fluxo Completo de Deploy:**
+```bash
+# 1. Na máquina de desenvolvimento (build e push)
+./scripts/build-and-push.sh meuusuario
+
+# 2. Na máquina de produção (deploy)
+./scripts/deploy-prod.sh meuusuario
+
+# 3. Verificar status
+docker-compose ps
+```
+
 ### **Estrutura Docker**
 ```yaml
 # docker-compose.yml
@@ -228,7 +289,7 @@ services:
   banking-app:     # Shell microfrontend
   dashboard-app:   # Dashboard microfrontend  
   json-server:     # Mock database
-  nginx:          # Load balancer/proxy
+  nginx:          # Proxy reverso
 ```
 
 ---
@@ -299,6 +360,44 @@ docker-compose logs -f
 ### **AWS EC2 Setup**
 - **EC2 Instance**: t3.medium ou superior recomendado
 - **Security Groups**: Configuração de portas 80, 443, 3000, 3001
+- **Nginx**: Proxy reverso para microfrontends
+
+### **🔧 Nginx - Proxy Reverso**
+
+O Nginx é um componente fundamental na arquitetura, atuando como:
+
+#### **Funcionalidades do Nginx:**
+- **Proxy Reverso**: Roteia APIs específicas para cada app
+- **SSL Termination**: Gerencia certificados HTTPS
+- **Compression**: Gzip para melhor performance
+- **Security Headers**: Headers de segurança automáticos
+
+#### **Roteamento Inteligente:**
+- **Rota Principal (/)**: Direcionada para Banking App (Shell)
+- **Rotas de Transações (/transactions, /analytics)**: Direcionadas para Dashboard App
+- **APIs de Autenticação**: Roteadas para Banking App
+- **APIs de Dados**: Roteadas para Dashboard App
+- **Assets Estáticos**: Cache otimizado com headers de performance
+
+#### **Benefícios da Implementação:**
+- ✅ **Single Entry Point**: Uma única URL (54.233.181.19) para todo o sistema
+- ✅ **Cookie Sharing**: Autenticação compartilhada entre microfrontends
+- ✅ **CORS Handling**: Configuração centralizada sem problemas de origem cruzada
+- ✅ **Performance**: Compressão Gzip reduz transferência em ~70%
+- ✅ **Security**: Headers automáticos contra XSS e clickjacking
+- ✅ **Caching**: Assets estáticos com cache de 1 ano
+- ✅ **Roteamento Inteligente**: Direciona requests baseado em URLs
+
+#### **Roteamento em Produção:**
+```bash
+# Exemplos de roteamento no EC2:
+http://54.233.181.19/              → Banking App (Shell)
+http://54.233.181.19/login         → Banking App (Auth)
+http://54.233.181.19/transactions  → Dashboard App (Microfrontend)
+http://54.233.181.19/analytics     → Dashboard App (Microfrontend)
+http://54.233.181.19/api/balance   → Dashboard App (API)
+http://54.233.181.19/api/login     → Banking App (API)
+```
 
 ### **Environment Variables**
 ```env
@@ -346,7 +445,7 @@ async rewrites() {
 
 ### **Bundle Analysis**
 - **Next.js Automatic Code Splitting**: Lazy loading automático de páginas
-- **Tree Shaking**: Eliminação de código não usado
+- **Tree Shaking**: Eliminação de código não usado pelo webpack
 - **Shared Packages**: Compartilhamento eficiente via pnpm workspaces
 
 ### **Runtime Performance**
@@ -400,10 +499,7 @@ Este projeto segue as melhores práticas de desenvolvimento:
 
 ## 📝 Documentação Adicional
 
-- 📖 [MICROFRONTENDS.md](./MICROFRONTENDS.md) - Documentação detalhada da arquitetura
-- 🐳 [Docker Guide](./docs/docker.md) - Guia completo de containerização
-- 🚀 [Deploy Guide](./docs/deploy.md) - Instruções de deploy
-- 🔧 [Development Guide](./docs/development.md) - Guia para desenvolvedores
+- 📖 [MICROFRONTENDS.md](./MICROFRONTENDS.md) - Guia rápido e configuração Multi-Zone específica
 
 ---
 
@@ -559,6 +655,14 @@ A camada de API (`/pages/api`) atua como um **BFF**, isolando as regras de negó
 | `build` | Cria o build de produção                                                                   |
 | `start` | Executa o build de produção                                                                |
 | `lint`  | Executa o linter (ESLint)                                                                  |
+
+### **🐳 Scripts de Deploy**
+| Script  | Descrição                                                                                  |
+| ------- | ------------------------------------------------------------------------------------------ |
+| `./scripts/build-and-push.sh` | 🏗️ Build e push das imagens Docker para Docker Hub |
+| `./scripts/deploy-prod.sh` | 🚀 Deploy em produção baixando imagens do Docker Hub |
+| `./scripts/dev.sh` | 🛠️ Script helper para desenvolvimento local |
+| `./scripts/stop.sh` | ⏹️ Para todos os containers Docker |
 
 > 🔥 O script `prepare-server-json` **não precisa ser executado manualmente**, pois já faz parte do fluxo do `dev`.
 
