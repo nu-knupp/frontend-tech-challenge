@@ -1,0 +1,13 @@
+{
+  "name": "@banking/shared-config",
+  "version": "0.1.0",
+  "private": true,
+  "files": [
+    "*.json"
+  ],
+  "dependencies": {
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "@types/node": "^20"
+  }
+}

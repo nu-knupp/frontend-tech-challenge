@@ -3,6 +3,8 @@
 # dependencies
 /db
 /node_modules
+apps/*/node_modules
+packages/*/node_modules
 /.pnp
 .pnp.*
 .yarn/*
@@ -16,6 +18,7 @@
 
 # next.js
 /.next/
+apps/*/.next/
 /out/
 
 # production
@@ -44,3 +47,6 @@ next-env.d.ts
 
 # jetbrains ide
 .idea/
+
+# turbo
+.turbo

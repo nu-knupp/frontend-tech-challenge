@@ -7,7 +7,7 @@ import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useTransactionStore } from "@/hooks/useTransactionStore";
-import { useAuth } from "@/context/AuthContext";
+import { useAuthContext as useAuth } from "@banking/shared-hooks";
 
 export default function BalanceCard() {
   const [showBalance, setShowBalance] = useState(true);

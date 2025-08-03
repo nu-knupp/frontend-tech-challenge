@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
-import { AuthProvider } from "@/context/AuthContext";
-import ThemeRegistry from "../components/ThemeRegistry";
+import { AuthProvider } from "@banking/shared-hooks";
+import ThemeRegistry from "@banking/shared-components/src/ThemeRegistry";
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const cookieStore = cookies();

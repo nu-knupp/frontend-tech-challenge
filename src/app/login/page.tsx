@@ -10,7 +10,7 @@ import { AccountBalance } from "@mui/icons-material"
 import api from "@/services/api"
 import { useRouter } from "next/navigation"
 import Image from "next/image"
-import { useAuth } from "@/context/AuthContext"
+import { useAuthContext as useAuth } from "@banking/shared-hooks"
 
 export default function Login() {
     const [email, setEmail] = useState("")

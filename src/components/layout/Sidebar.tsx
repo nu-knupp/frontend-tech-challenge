@@ -17,7 +17,7 @@ import {
 } from "@mui/icons-material";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
+import { useAuthContext as useAuth } from "@banking/shared-hooks";
 
 const drawerWidth = 240;
 

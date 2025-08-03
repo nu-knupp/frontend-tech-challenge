@@ -7,7 +7,7 @@ import { AccountCircle } from "@mui/icons-material";
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
+import { useAuthContext as useAuth } from "@banking/shared-hooks";
 
 interface HeaderProps {
   onDrawerToggle: () => void;
