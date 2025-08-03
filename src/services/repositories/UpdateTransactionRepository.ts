@@ -7,6 +7,6 @@ export class UpdateTransactionRepository implements IUpdateTransactionRepository
   private readonly baseUrl = `${API_BASE_URL}/transactions`;
 
   async update(id: string, data: Partial<Transaction>): Promise<void> {
-    axios.patch(this.baseUrl + `/${id}`, data)
+    return axios.patch(`${this.baseUrl}/${id}`, data);
   }
 }

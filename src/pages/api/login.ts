@@ -4,13 +4,19 @@ import path from "path";
 import { serialize } from "cookie";
 import bcrypt from "bcrypt";
 
-const USERS_FILE = path.resolve(process.cwd(), "db", "users.json");
+const DB_FILE = path.resolve(process.cwd(), "db", "db.json");
 
 function readUsers() {
-  if (!fs.existsSync(USERS_FILE)) return [];
-  const data = fs.readFileSync(USERS_FILE, "utf-8");
-  return JSON.parse(data);
+  if (!fs.existsSync(DB_FILE)) return [];
+  try {
+    const data = fs.readFileSync(DB_FILE, "utf-8");
+    const json = JSON.parse(data);
+    return Array.isArray(json.users) ? json.users : [];
+  } catch (e) {
+    return [];
+  }
 }
+
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const origin = req.headers.origin || '*';

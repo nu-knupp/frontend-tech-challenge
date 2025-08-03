@@ -2,25 +2,67 @@ import { NextApiRequest, NextApiResponse } from "next";
 import fs from "fs";
 import path from "path";
 import bcrypt from "bcrypt";
+import { Transaction } from "@/types/Transaction";
 
-const USERS_FILE = path.resolve(process.cwd(), "db", "users.json");
+const DB_FILE = path.resolve(process.cwd(), "db", "db.json");
+
 
 function readUsers() {
-  if (!fs.existsSync(USERS_FILE)) {
+  if (!fs.existsSync(DB_FILE)) {
     // Cria o diretório se não existir
-    const dir = path.dirname(USERS_FILE);
+    const dir = path.dirname(DB_FILE);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
+      // Garante permissão de escrita no diretório
+      try { fs.chmodSync(dir, 0o777); } catch (e) {}
     }
-    fs.writeFileSync(USERS_FILE, '[]', 'utf-8');
+    fs.writeFileSync(DB_FILE, JSON.stringify({ users: [], transactions: [] }, null, 2), 'utf-8');
+    // Garante permissão de escrita no arquivo
+    try { fs.chmodSync(DB_FILE, 0o666); } catch (e) {}
     return [];
   }
-  const data = fs.readFileSync(USERS_FILE, "utf-8");
-  return JSON.parse(data);
+  try {
+    const data = fs.readFileSync(DB_FILE, "utf-8");
+    const json = JSON.parse(data);
+    return Array.isArray(json.users) ? json.users : [];
+  } catch (e) {
+    return [];
+  }
 }
 
-function writeUsers(users: any[]) {
-  fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
+type User = {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+};
+
+type DB = {
+  users: User[];
+  transactions: Transaction[];
+};
+
+function writeUsers(users: User[]) {
+  let db: DB = { users: [], transactions: [] };
+  if (fs.existsSync(DB_FILE)) {
+    try {
+      db = JSON.parse(fs.readFileSync(DB_FILE, "utf-8"));
+    } catch (e) {
+      // ignora erro
+    }
+  }
+  db.users = users;
+  try {
+    fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
+  } catch (e) {
+    // Tenta ajustar permissão se necessário
+    try {
+      fs.chmodSync(DB_FILE, 0o666);
+      fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2));
+    } catch (err) {
+      throw err;
+    }
+  }
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

@@ -7,6 +7,6 @@ export class CreateTransactionRepository implements ICreateTransactionRepository
   private readonly baseUrl = `${API_BASE_URL}/transactions`;
 
   async save(transaction: Transaction): Promise<void> {
-    return axios.post(this.baseUrl, transaction)
+    return axios.post(this.baseUrl, transaction);
   }
 }
