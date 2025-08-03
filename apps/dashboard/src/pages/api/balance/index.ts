@@ -12,8 +12,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const repository = new GetBalanceRepository();
     
     // Buscar todas as transações
-    const result = await repository.listTransactions(1, 1000);
-    const userTransactions = result.transactions.filter(
+    const result = await repository.listTransactions();
+    if (!result) {
+      return res.status(500).json({ error: 'Erro ao buscar transações' });
+    }
+    
+    const userTransactions = result.filter(
       (transaction: any) => transaction.userEmail === session
     );
     

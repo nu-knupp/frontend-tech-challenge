@@ -1,6 +1,7 @@
 import { Transaction } from "@banking/shared-types";
 
 export interface IListTransactionsRepository {
+  listTransactions(): Promise<Transaction[] | null>;
   listTransactions(
     page: number,
     limit: number,

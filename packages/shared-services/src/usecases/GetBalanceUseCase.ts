@@ -1,13 +1,12 @@
-import { IListTransactionsRepository } from "../interfaces";
+import { IGetBalanceRepository } from "../interfaces/IGetBalanceRepository";
 
 export class GetBalanceUseCase {
-  constructor(private repository: IListTransactionsRepository) {}
+  constructor(private repository: IGetBalanceRepository) {}
 
   async execute(): Promise<number> {
-    const result = await this.repository.listTransactions(1, 1000);
-    const transactions = result.transactions;
+    const transactions = await this.repository.listTransactions();
 
-    return transactions.reduce((balance, transaction) => {
+    return (transactions ?? []).reduce((balance, transaction) => {
       return transaction.type === "credit"
         ? balance + transaction.amount
         : balance - transaction.amount;

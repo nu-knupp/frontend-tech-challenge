@@ -216,8 +216,8 @@ export default function RecentTransactions() {
                     key={transaction.id}
                     isSelected={isSelected}
                     transaction={transaction}
-                    handleSelect={() => setSelectedTransaction(transaction)}
-                    handleDoubleClick={() => setShowTransactionEditor(true)}
+                    onSelect={() => setSelectedTransaction(transaction)}
+                    onDoubleClick={() => setShowTransactionEditor(true)}
                   />
                 );
               })}

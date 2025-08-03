@@ -9,3 +9,4 @@ export { default as DeleteTransactionDialog } from './DeleteTransactionDialog';
 export { default as NewTransactionForm } from './NewTransactionForm';
 export { default as RecentTransactions } from './RecentTransactions';
 export { default as TransactionEditor } from './TransactionEditor';
+export { default as FinancialSummary } from './FinancialSummary';

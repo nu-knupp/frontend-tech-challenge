@@ -68,7 +68,7 @@ export default function TransactionEditor({
 
   useEffect(() => {
     if (transaction) {
-      const initialCategories = transaction.categories || [];
+      const initialCategories: string[] = transaction.categories || [];
       setCategories(initialCategories.includes("Outros") ? ["Outros"] : initialCategories);
       setObservation(transaction.observation || "");
       setFormattedAmount(formatValue(transaction.amount));
