@@ -153,7 +153,7 @@ export default function NewTransactionForm() {
       observation,
       file: base64File,
       fileName: file?.name || "",
-      categories: categories.length > 0 ? categories : ["Categoria Indefinida"],
+      categories: categories.length > 0 ? categories : ["Outros"],
     };
 
     const now = new Date();

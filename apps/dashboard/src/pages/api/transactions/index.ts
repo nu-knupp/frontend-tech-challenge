@@ -16,16 +16,42 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   if (req.method === 'GET') {
-    const { page = "1", limit = "10", sort = "desc", type } = req.query;
+    const {
+      page = "1",
+      limit = "10",
+      sort = "desc",
+      type,
+      category,
+      q,
+      startDate,
+      endDate
+    } = req.query;
 
     const pageNumber = parseInt(page as string, 10);
     const limitNumber = parseInt(limit as string, 10);
     const sortOrder = sort === 'asc' || sort === 'desc' ? sort : 'desc';
     const transactionType = type === 'credit' || type === 'debit' ? type : undefined;
 
+    const categoryArray: string[] = Array.isArray(category)
+      ? category
+      : category
+      ? [category]
+      : [];
+
     const repository = new ListTransactionsRepository();
     const useCase = new ListTransactionsUseCase(repository);
-    const result = await useCase.execute(pageNumber, limitNumber, 'date', sortOrder, transactionType);
+
+    const result = await useCase.execute(
+      pageNumber,
+      limitNumber,
+      'date',
+      sortOrder,
+      transactionType,
+      categoryArray.length > 0 ? categoryArray : undefined,
+      q as string,
+      startDate as string,
+      endDate as string
+    );
 
     // Filtrar transações por usuário (usando email como identificador)
     const userTransactions = result.transactions.filter(
@@ -55,7 +81,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const repository = new CreateTransactionRepository();
     const useCase = new CreateTransactionUseCase(repository);
-    await useCase.execute(transactionWithUser);
+    await useCase.execute(transactionWithUser as Transaction);
     return res.status(201).json({ message: 'Transação criada' });
   }
 

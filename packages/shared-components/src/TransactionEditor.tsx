@@ -6,7 +6,8 @@ import { Delete } from "@mui/icons-material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import {
   Box,
-  Button, Chip,
+  Button,
+  Chip,
   Drawer,
   FormControl,
   IconButton,
@@ -41,39 +42,36 @@ interface TransactionEditorProps {
   transaction: Transaction | null;
 }
 
-export default function TransactionEditor(
-  {
-    transaction,
-    open,
-    onClose,
-  }: TransactionEditorProps) {
+export default function TransactionEditor({
+  transaction,
+  open,
+  onClose,
+}: TransactionEditorProps) {
   const [formattedAmount, setFormattedAmount] = useState("");
-  const [type, setType] = useState<TransactionType>(
-    transaction?.type as TransactionType
-  );
+  const [type, setType] = useState<TransactionType>(transaction?.type as TransactionType);
   const [observation, setObservation] = useState("");
   const [fileName, setFileName] = useState<string | null>(null);
   const [fileBase64, setFileBase64] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [categories, setCategories] = useState<string[] | []>([]);
+  const [categories, setCategories] = useState<string[]>([]);
   const [showDuplicateModal, setShowDuplicateModal] = useState(false);
   const [pendingTransaction, setPendingTransaction] = useState<Omit<Transaction, "id"> | null>(null);
 
   const { transactions, updateTransaction } = useTransactionStore();
 
   const hasntChangedSomeField =
-    (parseFloat(formattedAmount.replace(/\./g, "").replace(",", ".")) ==
-      transaction?.amount &&
-      type == transaction?.type &&
-      observation == transaction?.observation &&
-      (transaction.file ? (fileBase64 == transaction.file) : fileBase64 == null)) ||
-    parseCurrencyString(formattedAmount) == 0;
+    (parseFloat(formattedAmount.replace(/\./g, "").replace(",", ".")) === transaction?.amount &&
+      type === transaction?.type &&
+      observation === transaction?.observation &&
+      (transaction.file ? fileBase64 === transaction.file : fileBase64 == null)) ||
+    parseCurrencyString(formattedAmount) === 0;
 
   useEffect(() => {
     if (transaction) {
-      setCategories(transaction?.categories || []);
-      setObservation(transaction?.observation as string);
-      setFormattedAmount(formatValue(transaction?.amount));
+      const initialCategories = transaction.categories || [];
+      setCategories(initialCategories.includes("Outros") ? ["Outros"] : initialCategories);
+      setObservation(transaction.observation || "");
+      setFormattedAmount(formatValue(transaction.amount));
       setFileBase64(transaction.file || null);
       setFileName(transaction.fileName || null);
     }
@@ -90,7 +88,6 @@ export default function TransactionEditor(
   const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0];
     if (!selected) return;
-
     const base64 = await fileToBase64(selected);
     setFileBase64(base64);
     setFileName(selected.name);
@@ -103,12 +100,10 @@ export default function TransactionEditor(
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/\D/g, "");
-
     if (value === "") {
       setFormattedAmount("");
       return;
     }
-
     setFormattedAmount(formatValue(value));
   };
 
@@ -128,14 +123,10 @@ export default function TransactionEditor(
     excludeId?: string
   ): boolean => {
     const newDateStr = newDate.toISOString().split("T")[0];
-
     return transactions.some((t) => {
       const existingDateStr = new Date(t.date).toISOString().split("T")[0];
-
-      const isSameTransaction = t.id === excludeId;
-
       return (
-        !isSameTransaction &&
+        t.id !== excludeId &&
         t.type === newType &&
         t.amount === newAmount &&
         existingDateStr === newDateStr &&
@@ -145,7 +136,8 @@ export default function TransactionEditor(
   };
 
   const handleSubmit = () => {
-    const numericValue = parseCurrencyString(formattedAmount)
+    const numericValue = parseCurrencyString(formattedAmount);
+    const selectedCategories = categories.length > 0 ? categories : ["Outros"];
     const fieldsToUpdate = {
       type,
       amount: numericValue,
@@ -153,30 +145,31 @@ export default function TransactionEditor(
       observation,
       file: fileBase64 || '',
       fileName: fileName || '',
-      categories: categories.length > 0 ? categories : ["Categoria Indefinida"],
+      categories: selectedCategories,
     };
 
     const now = new Date();
-    if (isDuplicateTransaction(transactions, type, numericValue, now, fieldsToUpdate.categories, transaction?.id)) {
+    if (
+      isDuplicateTransaction(
+        transactions,
+        type,
+        numericValue,
+        now,
+        fieldsToUpdate.categories,
+        transaction?.id
+      )
+    ) {
       setPendingTransaction(fieldsToUpdate);
       setShowDuplicateModal(true);
       return;
     }
 
-    updateTransaction(
-      transaction?.id as string,
-      transaction as Transaction,
-      fieldsToUpdate
-    ).then(onClose);
+    updateTransaction(transaction?.id as string, transaction as Transaction, fieldsToUpdate).then(onClose);
   };
 
   const handleConfirmSaveDuplicate = () => {
     if (pendingTransaction) {
-      updateTransaction(
-        transaction?.id as string,
-        transaction as Transaction,
-        pendingTransaction
-      ).then(onClose);
+      updateTransaction(transaction?.id as string, transaction as Transaction, pendingTransaction).then(onClose);
       setPendingTransaction(null);
       setShowDuplicateModal(false);
     }
@@ -188,10 +181,7 @@ export default function TransactionEditor(
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (
-      !/[0-9]|Backspace|Delete|ArrowLeft|ArrowRight|,/.test(e.key) &&
-      e.key.length === 1
-    ) {
+    if (!/[0-9]|Backspace|Delete|ArrowLeft|ArrowRight|,/.test(e.key) && e.key.length === 1) {
       e.preventDefault();
     }
   };
@@ -199,7 +189,13 @@ export default function TransactionEditor(
   const handleChangeObservations = (e: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
     const value = e.target.value;
     setObservation(value);
-    setCategories(suggestCategories(value));
+    const suggested = suggestCategories(value);
+    if (suggested.length === 0) {
+      setCategories(["Outros"]);
+    } else {
+      const filtered = suggested.filter((cat) => cat !== "Outros");
+      setCategories(filtered.length > 0 ? filtered : ["Outros"]);
+    }
   };
 
   return (
@@ -218,14 +214,7 @@ export default function TransactionEditor(
           },
         }}
       >
-        <Box
-          sx={{
-            p: 2,
-            display: "flex",
-            flexDirection: "column",
-            height: "100%",
-          }}
-        >
+        <Box sx={{ p: 2, display: "flex", flexDirection: "column", height: "100%" }}>
           <Typography variant="h6" mb={2}>
             Editar Transação
           </Typography>
@@ -250,14 +239,9 @@ export default function TransactionEditor(
               onChange={handleChange}
               InputProps={{ startAdornment: <span>R$&nbsp;</span> }}
             />
-
             <TextField
               label="Data"
-              value={
-                transaction
-                  ? format(parseISO(transaction.date), "dd/MM/yyyy")
-                  : ""
-              }
+              value={transaction ? format(parseISO(transaction.date), "dd/MM/yyyy") : ""}
               disabled
               fullWidth
             />
@@ -269,91 +253,69 @@ export default function TransactionEditor(
               multiline
               rows={2}
             />
-            <>
-              {categories.length > 0 && (
-                <Box mt={0.5} sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-                  <>
-                    {categories.map((categoria) => (
-                      <Chip
-                        key={categoria}
-                        label={categoria}
-                        color="primary"
-                        size="small"
-                        sx={{ textTransform: 'capitalize' }}
-                      />
-                    ))}
-                  </>
-                </Box>
-              )}
-            </>
-            <>
-              {fileBase64 && fileName ? (
-                <Box
-                  sx={{
-                    mt: 1,
-                    p: 1,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                    maxWidth: 350,
-                  }}
-                >
-                  <>
-                    {fileBase64.startsWith("data:image/") ? (
-                      <Box
-                        component="img"
-                        src={fileBase64}
-                        alt="Preview"
-                        sx={{
-                          width: 40,
-                          height: 40,
-                          objectFit: "cover",
-                          borderRadius: 1,
-                        }}
-                      />
-                    ) : (
-                      <Box
-                        sx={{
-                          width: 40,
-                          height: 40,
-                          bgcolor: "#eee",
-                          display: "flex",
-                          alignItems: "center",
-                          justifyContent: "center",
-                          fontSize: 18,
-                          borderRadius: 1,
-                        }}
-                      >
-                        📄
-                      </Box>
-                    )}
-                  </>
-                  <Typography variant="body2" title={fileName} noWrap>
-                    {fileName}
-                  </Typography>
-                  <IconButton size="small" color="error" onClick={handleRemoveFile}>
-                    <Delete fontSize="small" />
-                  </IconButton>
-                </Box>
-              ) : (
-                <Button
-                  component="label"
-                  role={undefined}
-                  variant="outlined"
-                  tabIndex={-1}
-                  startIcon={<CloudUploadIcon />}
-                  sx={{ p: 3 }}
-                >
-                  upload de Arquivo
-                  <VisuallyHiddenInput
-                    ref={fileInputRef}
-                    type="file"
-                    onChange={handleFileChange}
-                    multiple={false}
+            {categories.length > 0 && (
+              <Box mt={0.5} sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+                {categories.map((categoria) => (
+                  <Chip
+                    key={categoria}
+                    label={categoria}
+                    color="primary"
+                    size="small"
+                    sx={{ textTransform: "capitalize" }}
                   />
-                </Button>
-              )}
-            </>
+                ))}
+              </Box>
+            )}
+            {fileBase64 && fileName ? (
+              <Box sx={{ mt: 1, p: 1, display: "flex", alignItems: "center", gap: 1, maxWidth: 350 }}>
+                {fileBase64.startsWith("data:image/") ? (
+                  <Box
+                    component="img"
+                    src={fileBase64}
+                    alt="Preview"
+                    sx={{ width: 40, height: 40, objectFit: "cover", borderRadius: 1 }}
+                  />
+                ) : (
+                  <Box
+                    sx={{
+                      width: 40,
+                      height: 40,
+                      bgcolor: "#eee",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      fontSize: 18,
+                      borderRadius: 1,
+                    }}
+                  >
+                    📄
+                  </Box>
+                )}
+                <Typography variant="body2" title={fileName} noWrap>
+                  {fileName}
+                </Typography>
+                <IconButton size="small" color="error" onClick={handleRemoveFile}>
+                  <Delete fontSize="small" />
+                </IconButton>
+              </Box>
+            ) : (
+              <Button
+                component="label"
+                role={undefined}
+                variant="outlined"
+                tabIndex={-1}
+                startIcon={<CloudUploadIcon />}
+                sx={{ p: 3 }}
+              >
+                upload de Arquivo
+                <VisuallyHiddenInput
+                  ref={fileInputRef}
+                  type="file"
+                  onChange={handleFileChange}
+                  multiple={false}
+                />
+              </Button>
+            )}
           </Stack>
           <Button
             onClick={handleSubmit}
