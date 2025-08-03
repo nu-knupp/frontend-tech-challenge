@@ -7,7 +7,7 @@ services:
     environment:
       - NODE_ENV=production
       - API_BASE_URL=http://json-server:3001
-      - NEXT_PUBLIC_API_BASE_URL=http://json-server:3001
+      - NEXT_PUBLIC_API_BASE_URL=http://54.233.181.19:3001
     volumes:
       - ./db:/app/db
     command: ["node", "server.js"]
@@ -22,6 +22,7 @@ services:
     environment:
       - NODE_ENV=production
       - API_BASE_URL=http://json-server:3001
+      - NEXT_PUBLIC_API_BASE_URL=http://54.233.181.19:3001
     networks:
       - mfe-net
 
