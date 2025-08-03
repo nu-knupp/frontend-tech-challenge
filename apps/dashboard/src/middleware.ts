@@ -11,9 +11,10 @@ export function middleware(request: NextRequest) {
   );
 
   if (isProtected && !session) {
-    // Redirecionar para o banking app (onde está o login)
-    const loginUrl = new URL('/login', request.url);
-    loginUrl.port = '3000'; // Porta do banking app
+    // Redirecionar para o banking app (onde está o login) usando o domínio correto
+    const host = request.headers.get('host') || 'localhost:3000';
+    const protocol = request.headers.get('x-forwarded-proto') || 'http';
+    const loginUrl = new URL('/login', `${protocol}://${host}`);
     return NextResponse.redirect(loginUrl);
   }
 
