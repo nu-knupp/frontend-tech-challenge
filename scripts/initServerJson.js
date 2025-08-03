@@ -1,17 +1,71 @@
 import fs from "fs";
 import path from "path";
 
-const filePath = path.resolve(
-  "db",
-  "server.json"
-);
+const serverFilePath = path.resolve("db", "server.json");
+const usersFilePath = path.resolve("db", "users.json");
 
-fs.mkdirSync(path.dirname(filePath), { recursive: true });
+fs.mkdirSync(path.dirname(serverFilePath), { recursive: true });
 
-if (!fs.existsSync(filePath)) {
-  const initialContent = { transactions: [] };
-  fs.writeFileSync(filePath, JSON.stringify(initialContent, null, 2));
-  console.log("✅ server.json criado com sucesso em:", filePath);
+// Estrutura padrão para server.json
+const defaultServerData = {
+  balance: 0,
+  transactions: []
+};
+
+// Estrutura padrão para users.json
+const defaultUsersData = [];
+
+// Lê ou cria server.json
+let serverData = defaultServerData;
+if (fs.existsSync(serverFilePath)) {
+  try {
+    const fileContent = fs.readFileSync(serverFilePath, "utf-8");
+    const parsedData = JSON.parse(fileContent);
+    // Garante que as propriedades obrigatórias existem
+    serverData = {
+      balance: parsedData.balance || 0,
+      transactions: parsedData.transactions || [],
+      ...parsedData // Preserva outras propriedades existentes
+    };
+    console.log("ℹ️  server.json carregado de:", serverFilePath);
+  } catch (error) {
+    console.log("⚠️  Erro ao ler server.json, usando dados padrão");
+    serverData = defaultServerData;
+  }
 } else {
-  console.log("ℹ️  server.json já existe em:", filePath);
+  fs.writeFileSync(serverFilePath, JSON.stringify(serverData, null, 2));
+  console.log("✅ server.json criado em:", serverFilePath);
 }
+
+// Lê ou cria users.json
+let usersData = defaultUsersData;
+if (fs.existsSync(usersFilePath)) {
+  try {
+    const fileContent = fs.readFileSync(usersFilePath, "utf-8");
+    usersData = JSON.parse(fileContent);
+    if (!Array.isArray(usersData)) {
+      usersData = defaultUsersData;
+    }
+    console.log("ℹ️  users.json carregado de:", usersFilePath);
+  } catch (error) {
+    console.log("⚠️  Erro ao ler users.json, usando dados padrão");
+    usersData = defaultUsersData;
+  }
+} else {
+  fs.writeFileSync(usersFilePath, JSON.stringify(usersData, null, 2));
+  console.log("✅ users.json criado em:", usersFilePath);
+}
+
+// Combina ambos em server.json para o JSON Server
+const combinedData = {
+  ...serverData,
+  users: usersData
+};
+
+fs.writeFileSync(serverFilePath, JSON.stringify(combinedData, null, 2));
+console.log("✅ Dados combinados salvos em server.json");
+console.log("📊 Estrutura final:", {
+  balance: combinedData.balance,
+  transactions: combinedData.transactions.length + " transações",
+  users: combinedData.users.length + " usuários"
+});

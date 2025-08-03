@@ -1,18 +1,32 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import fs from "fs";
 import bcrypt from "bcrypt";
-import { config } from "@/lib/config";
 
-const USERS_FILE = config.usersFile;
+const API_URL = process.env.JSON_SERVER_URL || "http://localhost:3001/transactions";
+const USERS_URL = API_URL.replace('/transactions', '/users');
 
-function readUsers() {
-  if (!fs.existsSync(USERS_FILE)) return [];
-  const data = fs.readFileSync(USERS_FILE, "utf-8");
-  return JSON.parse(data);
+async function getUsers() {
+  try {
+    const response = await fetch(USERS_URL);
+    if (!response.ok) return [];
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching users:', error);
+    return [];
+  }
 }
 
-function writeUsers(users: any[]) {
-  fs.writeFileSync(USERS_FILE, JSON.stringify(users, null, 2));
+async function createUser(user: any) {
+  const response = await fetch(USERS_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(user),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to create user');
+  }
+  return await response.json();
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -26,21 +40,26 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: "Todos os campos são obrigatórios" });
   }
 
-  const users = readUsers();
-  if (users.find((u: any) => u.email === email)) {
-    return res.status(409).json({ error: "Usuário já cadastrado" });
+  try {
+    const users = await getUsers();
+    if (users.find((u: any) => u.email === email)) {
+      return res.status(409).json({ error: "Usuário já cadastrado" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = {
+      email,
+      password: hashedPassword,
+      firstName,
+      lastName,
+    };
+
+    await createUser(newUser);
+
+    return res.status(201).json({ message: "Cadastro realizado com sucesso" });
+  } catch (error) {
+    console.error('Registration error:', error);
+    return res.status(500).json({ error: "Erro interno do servidor" });
   }
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  users.push({
-    email,
-    password: hashedPassword,
-    firstName,
-    lastName,
-  });
-
-  writeUsers(users);
-
-  return res.status(201).json({ message: "Cadastro realizado com sucesso" });
 }

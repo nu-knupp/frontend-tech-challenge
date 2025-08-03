@@ -3,7 +3,7 @@ import { Transaction } from "@banking/shared-types";
 import axios from "axios";
 
 export class ListTransactionsRepository implements IListTransactionsRepository {
-  private readonly baseUrl = "http://localhost:3001/transactions";
+  private readonly baseUrl = process.env.JSON_SERVER_URL || "http://localhost:3001/transactions";
 
   async listTransactions(
     page: number,
