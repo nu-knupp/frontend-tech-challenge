@@ -2,7 +2,7 @@ services:
   nextjs:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: murilao/nextjs-app:latest
     container_name: nextjs-app
     ports:
       - "3000:3000"
@@ -19,7 +19,7 @@ services:
   analytics:
     build:
       context: ./apps/analytics
-      dockerfile: Dockerfile
+      dockerfile: murilao/analytics-mfe:latest
     container_name: analytics-mfe
     ports:
       - "8080:8080"
