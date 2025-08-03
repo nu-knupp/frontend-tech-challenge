@@ -1,8 +1,6 @@
 services:
   nextjs:
-    build:
-      context: .
-      dockerfile: murilao/nextjs-app:latest
+    image: murilao/nextjs-app:latest
     container_name: nextjs-app
     ports:
       - "3000:3000"
@@ -17,9 +15,7 @@ services:
       - mfe-net
 
   analytics:
-    build:
-      context: ./apps/analytics
-      dockerfile: murilao/analytics-mfe:latest
+    image: murilao/analytics-mfe:latest
     container_name: analytics-mfe
     ports:
       - "8080:8080"
