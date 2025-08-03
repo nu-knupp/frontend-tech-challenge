@@ -18,11 +18,17 @@ if [ -z "$DOCKER_USER" ]; then
 fi
 
 # Detectar docker compose
-if command -v docker compose >/dev/null 2>&1; then
+if docker compose version >/dev/null 2>&1; then
     COMPOSE_CMD="docker compose"
-else
+elif command -v docker-compose >/dev/null 2>&1; then
     COMPOSE_CMD="docker-compose"
+else
+    echo "❌ Docker Compose não encontrado!"
+    echo "Instale docker-compose ou docker compose"
+    exit 1
 fi
+
+echo "🔧 Usando: $COMPOSE_CMD"
 
 # Exportar variável para usar no docker-compose.prod.yml
 export DOCKER_USER
