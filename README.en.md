@@ -6,6 +6,7 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue)
 ![MUI](https://img.shields.io/badge/MUI-v5-blue)
 ![Docker](https://img.shields.io/badge/Docker-Ready-blue)
+![NGINX](https://img.shields.io/badge/NGINX-Proxy-green)
 ![Microfrontends](https://img.shields.io/badge/Architecture-Microfrontends-green)
 ![Status](https://img.shields.io/badge/Status-Production--Ready-success)
 
