@@ -536,7 +536,11 @@ Este projeto segue as melhores práticas de desenvolvimento:
 
 Para assistir ao vídeo de apresentação deste projeto, acesse o link abaixo:
 
+Fase 1:
 [https://www.youtube.com/watch?v=Fa9JwRX2lW4](https://www.youtube.com/watch?v=Fa9JwRX2lW4)
+
+Fase 2:
+[https://youtu.be/GrY2L5Kvg70](https://youtu.be/GrY2L5Kvg70)
 
 ---
 
