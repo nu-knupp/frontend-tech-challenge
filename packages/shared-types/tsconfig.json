@@ -1,0 +1,3 @@
+{
+  "extends": "@banking/shared-config/tsconfig.json"
+}

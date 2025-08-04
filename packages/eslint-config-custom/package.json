@@ -1,0 +1,13 @@
+{
+  "name": "@banking/eslint-config",
+  "version": "1.0.0",
+  "private": true,
+  "main": "next.js",
+  "dependencies": {
+    "@vercel/style-guide": "^6.0.0"
+  },
+  "devDependencies": {
+    "@types/eslint": "^8.44.0",
+    "eslint": "^8.0.0"
+  }
+}

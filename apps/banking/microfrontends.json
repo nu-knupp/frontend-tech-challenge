@@ -1,0 +1,28 @@
+{
+  "applications": {
+    "frontend-tech-challenge-banking": {
+      "development": {
+        "local": 3000,
+        "fallback": "frontend-tech-challenge-banking.vercel.app"
+      },
+      "routing": [
+        { 
+          "group": "auth", 
+          "paths": ["/", "/login", "/register"] 
+        }
+      ]
+    },
+    "frontend-tech-challenge-dashboard": {
+      "development": { 
+        "local": 3002,
+        "fallback": "frontend-tech-challenge-dashboard.vercel.app"
+      },
+      "routing": [
+        { 
+          "group": "dashboard", 
+          "paths": ["/transactions", "/transactions/:path*", "/analytics", "/analytics/:path*"] 
+        }
+      ]
+    }
+  }
+}

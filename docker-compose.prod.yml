@@ -1,0 +1,82 @@
+services:
+  # JSON Server - Mock API
+  json-server:
+    image: ${DOCKER_USER}/banking-app-json-server:latest
+    expose:
+      - "3001"
+    volumes:
+      - db_data:/app/db
+    networks:
+      - banking-network
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+
+  # Banking Microfrontend
+  banking:
+    image: ${DOCKER_USER}/banking-app-banking:latest
+    expose:
+      - "3000"
+    environment:
+      - NODE_ENV=production
+      - API_URL=http://json-server:3001
+      - JSON_SERVER_URL=http://json-server:3001/transactions
+      # Para configurar o endereço do servidor de produção:
+      # - API_URL=http://seu-servidor-prod.com:3001
+      # - JSON_SERVER_URL=http://seu-servidor-prod.com:3001/transactions
+    depends_on:
+      - json-server
+    networks:
+      - banking-network
+    restart: unless-stopped
+
+  # Dashboard Microfrontend
+  dashboard:
+    image: ${DOCKER_USER}/banking-app-dashboard:latest
+    expose:
+      - "3002"
+    environment:
+      - NODE_ENV=production
+      - API_URL=http://json-server:3001
+      - JSON_SERVER_URL=http://json-server:3001/transactions
+      # Para configurar o endereço do servidor de produção:
+      # - API_URL=http://seu-servidor-prod.com:3001
+      # - JSON_SERVER_URL=http://seu-servidor-prod.com:3001/transactions
+    depends_on:
+      - json-server
+    networks:
+      - banking-network
+    restart: unless-stopped
+
+  # Nginx Reverse Proxy
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - nginx_cache:/var/cache/nginx
+      - nginx_logs:/var/log/nginx
+    depends_on:
+      - banking
+      - dashboard
+    networks:
+      - banking-network
+    restart: unless-stopped
+
+networks:
+  banking-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+
+volumes:
+  db_data:
+    driver: local
+  nginx_cache:
+    driver: local
+  nginx_logs:
+    driver: local

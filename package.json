@@ -2,14 +2,25 @@
   "name": "frontend-tech-challenge",
   "version": "0.1.1",
   "private": true,
+  "packageManager": "pnpm@10.14.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "concurrently \"npm:dev:prepare-server-json\" \"npm:dev:next\" \"npm:dev:json\"",
+    "dev": "concurrently \"pnpm run dev:prepare-server-json\" \"pnpm run dev:json\" \"pnpm run dev:banking\" \"pnpm run dev:dashboard\"",
+    "dev:script": "./scripts/dev.sh",
+    "dev:banking": "pnpm --filter banking run dev",
+    "dev:dashboard": "pnpm --filter dashboard run dev",
     "dev:prepare-server-json": "node scripts/initServerJson.js",
-    "dev:next": "set NODE_OPTIONS=--inspect && next dev --port 3000 --turbopack",
     "dev:json": "json-server --watch db/server.json --port 3001",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "build": "turbo build",
+    "build:banking": "pnpm --filter banking run build",
+    "build:dashboard": "pnpm --filter dashboard run build",
+    "install:all": "pnpm install",
+    "lint": "turbo lint",
+    "typecheck": "turbo typecheck",
+    "clean": "turbo clean && rm -rf node_modules apps/*/node_modules packages/*/node_modules"
   },
   "type": "module",
   "dependencies": {
@@ -44,6 +55,7 @@
     "json-server": "^0.17.3",
     "tailwindcss": "^4",
     "ts-node": "^10.9.2",
+    "turbo": "^2.0.0",
     "typescript": "^5.8.3",
     "zod": "^3.25.4"
   }
