@@ -5,7 +5,7 @@ import {
   CreateTransactionUseCase,
   ListTransactionsUseCase,
 } from '@banking/shared-services';
-import { Transaction } from '@banking/shared-types';
+import { Transaction, TransactionQuery } from '@banking/shared-types';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -41,17 +41,29 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const repository = new ListTransactionsRepository();
     const useCase = new ListTransactionsUseCase(repository);
 
-    const result = await useCase.execute(
-      pageNumber,
-      limitNumber,
-      'date',
-      sortOrder,
-      transactionType,
-      categoryArray.length > 0 ? categoryArray : undefined,
-      q as string,
-      startDate as string,
-      endDate as string
-    );
+    // Build the query object
+    const query: TransactionQuery = {
+      pagination: {
+        page: pageNumber,
+        limit: limitNumber
+      },
+      sort: {
+        sortBy: 'date',
+        order: sortOrder as 'asc' | 'desc'
+      },
+      filters: {
+        type: transactionType,
+        categories: categoryArray.length > 0 ? categoryArray : undefined,
+        startDate: startDate as string,
+        endDate: endDate as string
+      },
+      search: q ? {
+        query: q as string,
+        fields: ['description', 'category']
+      } : undefined
+    };
+
+    const result = await useCase.execute(query);
 
     // Filtrar transações por usuário (usando email como identificador)
     const userTransactions = result.transactions.filter(

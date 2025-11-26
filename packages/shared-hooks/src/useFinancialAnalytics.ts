@@ -1,3 +1,5 @@
+'use client';
+
 import { useMemo } from 'react';
 import { Transaction } from '@banking/shared-types';
 import { format, subDays, eachDayOfInterval, parseISO } from 'date-fns';

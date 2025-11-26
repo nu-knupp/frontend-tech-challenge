@@ -1,3 +1,5 @@
+'use client';
+
 import { create } from 'zustand';
 import { Transaction } from '@banking/shared-types';
 import axios from 'axios';
