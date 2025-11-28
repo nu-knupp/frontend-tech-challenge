@@ -10,6 +10,7 @@ export type Transaction = {
   fileName?: string | null;
   categories: string[] | [];
   userEmail?: string; // Email do usuário que criou a transação
+  secure?: boolean; // Indica se os campos sensíveis estão criptografados
 };
 
 export type TransactionFormInput = {

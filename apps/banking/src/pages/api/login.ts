@@ -1,13 +1,20 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { serialize } from "cookie";
 import bcrypt from "bcrypt";
+import {
+  signAuthToken,
+  getSessionCookieName,
+  getSessionMaxAge,
+  shouldUseSecureCookies,
+  getSessionSameSite,
+} from "@banking/shared-utils";
 
 const API_URL = process.env.JSON_SERVER_URL || "http://localhost:3001/transactions";
 const USERS_URL = API_URL.replace('/transactions', '/users');
 
 async function getUsers() {
   try {
-    const response = await fetch(USERS_URL);
+    const response = await fetch(USERS_URL, { cache: "no-store" });
     if (!response.ok) return [];
     return await response.json();
   } catch (error) {
@@ -39,23 +46,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(401).json({ error: "Email ou senha inválidos" });
     }
 
-    const sessionCookie = serialize("session", email, {
-      path: "/",
-      httpOnly: true,
-      maxAge: 60 * 60 * 24, // 1 dia
-      sameSite: "lax",
-      secure: false, // true para HTTPS em produção
+    const token = await signAuthToken({
+      sub: user.email,
+      email: user.email,
+      name: user.firstName,
     });
 
-    const userNameCookie = serialize("userName", user.firstName, {
+    const sessionCookie = serialize(getSessionCookieName(), token, {
       path: "/",
       httpOnly: true,
-      maxAge: 60 * 60 * 24, // 1 dia
-      sameSite: "lax",
-      secure: false, // true para HTTPS em produção
+      maxAge: getSessionMaxAge(),
+      sameSite: getSessionSameSite(),
+      secure: shouldUseSecureCookies(),
     });
 
-    res.setHeader("Set-Cookie", [sessionCookie, userNameCookie]);
+    res.setHeader("Set-Cookie", sessionCookie);
+    res.setHeader("Cache-Control", "no-store");
 
     return res.status(200).json({
       message: "Login realizado com sucesso",

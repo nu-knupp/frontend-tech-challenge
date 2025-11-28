@@ -138,10 +138,12 @@ FROM node:18-alpine AS base
 - **Dark Mode Ready**: Estrutura preparada para modo escuro
 
 ### **🔒 Segurança e Autenticação**
-- **Cookie-based Auth**: Sistema seguro de autenticação
-- **User Isolation**: Dados segregados por usuário
-- **Validation**: Validação robusta com Zod schemas
-- **Error Handling**: Tratamento de erros consistente
+- **JWT Assinado (HS256)**: Tokens emitidos no login e validados em todas as rotas protegidas, inclusive no middleware do Edge.
+- **Cookies HttpOnly + SameSite=Strict**: Sessões blindadas contra XSS/CSRF, com flag `secure` automática em produção.
+- **Criptografia AES-256-GCM**: Observações, anexos e metadados de transações são persistidos criptografados, garantindo confidencialidade em repouso.
+- **User Isolation**: Dados segregados por usuário a partir do e-mail presente no token.
+- **Validation**: Validação robusta com Zod schemas e regras de senha forte (mínimo de 8 caracteres).
+- **Error Handling**: Tratamento de erros consistente em todas as APIs.
 
 ---
 
@@ -163,7 +165,22 @@ npm install -g pnpm
 # Clone o repositório
 git clone <repo-url>
 cd frontend-tech-challenge
+
+# Copie o arquivo de exemplo de variáveis
+cp env.example .env.local
 ```
+
+### **🔐 Variáveis de Ambiente Obrigatórias**
+| Variável | Descrição |
+|----------|-----------|
+| `AUTH_SECRET` | Chave usada para assinar/verificar os tokens JWT (mín. 32 caracteres). |
+| `ENCRYPTION_KEY` | Chave simétrica utilizada na criptografia AES-256-GCM dos dados sensíveis. |
+| `SESSION_COOKIE_NAME` | Nome do cookie de sessão compartilhado entre os microfrontends. |
+| `SESSION_MAX_AGE` | Tempo de vida do cookie em segundos (default: 28800 = 8h). |
+| `SESSION_COOKIE_SECURE` | Define se o cookie exige HTTPS (`true` em produção). |
+| `JSON_SERVER_URL` | Endpoint do JSON Server usado pelos repositórios. |
+
+> ⚠️ **Importante:** Em ambientes de produção, `AUTH_SECRET` e `ENCRYPTION_KEY` são obrigatórios e o build falhará caso não estejam definidos.
 
 ---
 

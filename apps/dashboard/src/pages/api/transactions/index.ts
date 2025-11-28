@@ -7,12 +7,20 @@ import {
 } from '@banking/shared-services';
 import { Transaction } from '@banking/shared-types';
 import { NextApiRequest, NextApiResponse } from 'next';
+import {
+  getSessionCookieName,
+  verifyAuthToken,
+} from '@banking/shared-utils';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // Verificar autenticação
-  const session = req.cookies.session;
-  if (!session) {
+  const token = req.cookies[getSessionCookieName()];
+  if (!token) {
     return res.status(401).json({ error: 'Não autorizado' });
+  }
+  const session = await verifyAuthToken(token);
+  if (!session) {
+    return res.status(401).json({ error: 'Sessão inválida' });
   }
 
   if (req.method === 'GET') {
@@ -55,7 +63,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     // Filtrar transações por usuário (usando email como identificador)
     const userTransactions = result.transactions.filter(
-      (transaction: any) => transaction.userEmail === session
+      (transaction: any) => transaction.userEmail === session.email
     );
 
     return res.status(200).json({
@@ -76,7 +84,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Adicionar email do usuário à transação
     const transactionWithUser = {
       ...parseResult.data,
-      userEmail: session
+      userEmail: session.email
     };
 
     const repository = new CreateTransactionRepository();

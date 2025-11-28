@@ -1,6 +1,7 @@
 import { IListTransactionsRepository } from "../interfaces";
 import { Transaction } from "@banking/shared-types";
 import axios from "axios";
+import { decryptTransactionPayload } from "@banking/shared-utils";
 
 export class ListTransactionsRepository implements IListTransactionsRepository {
   private readonly baseUrl = process.env.JSON_SERVER_URL || "http://localhost:3001/transactions";
@@ -63,7 +64,7 @@ export class ListTransactionsRepository implements IListTransactionsRepository {
     totalPages: number;
   }> {
     const response = await axios.get<Transaction[]>(this.baseUrl);
-    let data = response.data;
+    let data = response.data.map(decryptTransactionPayload);
 
     // Se não há parâmetros, retorna todas as transações (para GetBalanceUseCase)
     if (page === undefined && limit === undefined) {

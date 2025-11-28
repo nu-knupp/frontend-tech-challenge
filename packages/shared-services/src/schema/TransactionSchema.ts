@@ -9,6 +9,8 @@ export const TransactionSchema = z.object({
   file: z.string().nullable().optional(),
   fileName: z.string().nullable().optional(),
   categories: z.array(z.string()),
+  userEmail: z.string().email().optional(),
+  secure: z.boolean().optional(),
 });
 
 // Schema for updating transactions (partial)
