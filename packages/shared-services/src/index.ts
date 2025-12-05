@@ -14,5 +14,17 @@ export * from './usecases/UpdateTransactionUseCase';
 export * from './usecases/DeleteTransactionUseCase';
 export * from './usecases/GetBalanceUseCase';
 
+// CQRS Pattern
+export * from './cqrs';
+
+// Feature Modules
+export * from './features';
+
+// Dependency Injection
+export * from './di';
+
+// Builders
+export * from './builders/TransactionQueryBuilder';
+
 // Schema
 export * from './schema/TransactionSchema';
