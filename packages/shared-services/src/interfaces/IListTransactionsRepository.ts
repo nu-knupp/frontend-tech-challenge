@@ -1,22 +1,14 @@
-import { Transaction } from "@banking/shared-types";
+import { Transaction, TransactionQuery, PaginatedTransactionResult } from "@banking/shared-types";
 
 export interface IListTransactionsRepository {
+  /**
+   * Legacy method for backward compatibility
+   * @deprecated Use execute method with TransactionQuery instead
+   */
   listTransactions(): Promise<Transaction[] | null>;
-  listTransactions(
-    page: number,
-    limit: number,
-    sortBy?: "date",
-    order?: "asc" | "desc",
-    type?: "credit" | "debit",
-    category?: string[],
-    q?: string,
-    startDate?: string,
-    endDate?: string,
-    includeUncategorized?: boolean
-  ): Promise<{
-    transactions: Transaction[];
-    total: number;
-    page: number;
-    totalPages: number;
-  }>;
+
+  /**
+   * New method using TransactionQuery for clean architecture
+   */
+  execute(query: TransactionQuery): Promise<PaginatedTransactionResult>;
 }
