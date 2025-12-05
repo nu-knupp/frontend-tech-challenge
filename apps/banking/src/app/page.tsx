@@ -3,10 +3,12 @@ import { Box, Button, Card, Typography } from '@mui/material';
 import { Key, Receipt, Savings } from '@mui/icons-material';
 import Image from 'next/image';
 import Link from 'next/link';
+import { getSessionCookieName, verifyAuthToken } from '@banking/shared-utils';
 
 export default async function Home() {
   const cookieStore = cookies();
-  const session = (await cookieStore).get('session')?.value;
+  const token = (await cookieStore).get(getSessionCookieName())?.value;
+  const isAuthenticated = !!(token && (await verifyAuthToken(token)));
 
   return (
     <Box
@@ -76,7 +78,7 @@ export default async function Home() {
             <Button
               variant='contained'
               component={Link}
-              href={session ? '/transactions' : '/login'}
+              href={isAuthenticated ? '/transactions' : '/login'}
               size='large'
               sx={{
                 borderRadius: 2,
@@ -88,7 +90,7 @@ export default async function Home() {
                 boxShadow: '0px 4px 20px rgba(0, 0, 0, 0.1)',
               }}
             >
-              {session ? 'Ir para Transações' : 'Fazer Login'}
+            {isAuthenticated ? 'Ir para Transações' : 'Fazer Login'}
             </Button>
           </Box>
 
@@ -228,7 +230,7 @@ export default async function Home() {
           <Button
             variant='contained'
             component={Link}
-            href={session ? '/transactions' : '/login'}
+            href={isAuthenticated ? '/transactions' : '/login'}
             size='large'
             sx={{
               borderRadius: 2,
@@ -244,7 +246,7 @@ export default async function Home() {
               fontSize: 'large',
             }}
           >
-            {session ? 'Acessar Transações' : 'Fazer Login'}
+            {isAuthenticated ? 'Acessar Transações' : 'Fazer Login'}
           </Button>
         </Box>
       </Box>

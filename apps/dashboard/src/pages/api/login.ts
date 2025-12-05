@@ -3,6 +3,13 @@ import fs from "fs";
 import { serialize } from "cookie";
 import bcrypt from "bcrypt";
 import { config } from "@/lib/config";
+import {
+  signAuthToken,
+  getSessionCookieName,
+  getSessionMaxAge,
+  shouldUseSecureCookies,
+  getSessionSameSite,
+} from "@banking/shared-utils";
 
 const USERS_FILE = config.usersFile;
 
@@ -34,12 +41,21 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(401).json({ error: "Email ou senha inválidos" });
   }
 
-  const sessionCookie = serialize("session", email, {
+  const token = await signAuthToken({
+    sub: user.email,
+    email: user.email,
+    name: user.firstName,
+  });
+
+  const sessionCookie = serialize(getSessionCookieName(), token, {
     path: "/",
     httpOnly: true,
-    maxAge: 60 * 60 * 24, // 1 dia
+    maxAge: getSessionMaxAge(),
+    sameSite: getSessionSameSite(),
+    secure: shouldUseSecureCookies(),
   });
   res.setHeader("Set-Cookie", sessionCookie);
+  res.setHeader("Cache-Control", "no-store");
 
   return res.status(200).json({
     message: "Login realizado com sucesso",

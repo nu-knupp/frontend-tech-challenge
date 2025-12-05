@@ -26,6 +26,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(400).json({ error: "Todos os campos são obrigatórios" });
   }
 
+  if (password.length < 8) {
+    return res.status(400).json({ error: "A senha deve ter pelo menos 8 caracteres" });
+  }
+
   const users = readUsers();
   if (users.find((u: any) => u.email === email)) {
     return res.status(409).json({ error: "Usuário já cadastrado" });

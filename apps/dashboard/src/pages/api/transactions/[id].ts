@@ -9,14 +9,22 @@ import {
 } from '@banking/shared-services';
 import { Transaction } from '@banking/shared-types';
 import type { NextApiRequest, NextApiResponse } from 'next';
+import {
+  getSessionCookieName,
+  verifyAuthToken,
+} from '@banking/shared-utils';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query;
   
   // Verificar autenticação
-  const session = req.cookies.session;
-  if (!session) {
+  const token = req.cookies[getSessionCookieName()];
+  if (!token) {
     return res.status(401).json({ error: 'Não autorizado' });
+  }
+  const session = await verifyAuthToken(token);
+  if (!session) {
+    return res.status(401).json({ error: 'Sessão inválida' });
   }
 
   if (req.method === 'GET') {
@@ -29,7 +37,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Verificar se a transação pertence ao usuário logado
-    if (result.userEmail && result.userEmail !== session) {
+    if (result.userEmail && result.userEmail !== session.email) {
       return res.status(403).json({ error: 'Acesso negado' });
     }
 
@@ -46,7 +54,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(404).json({ error: 'Transação não encontrada' });
     }
     
-    if (existingTransaction.userEmail && existingTransaction.userEmail !== session) {
+    if (existingTransaction.userEmail && existingTransaction.userEmail !== session.email) {
       return res.status(403).json({ error: 'Acesso negado' });
     }
     
@@ -75,7 +83,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(404).json({ error: 'Transação não encontrada' });
     }
     
-    if (existingTransaction.userEmail && existingTransaction.userEmail !== session) {
+    if (existingTransaction.userEmail && existingTransaction.userEmail !== session.email) {
       return res.status(403).json({ error: 'Acesso negado' });
     }
     

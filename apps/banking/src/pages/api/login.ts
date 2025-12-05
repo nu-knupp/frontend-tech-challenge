@@ -1,6 +1,13 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { serialize } from "cookie";
 import bcrypt from "bcrypt";
+import {
+  signAuthToken,
+  getSessionCookieName,
+  getSessionMaxAge,
+  shouldUseSecureCookies,
+  getSessionSameSite,
+} from "@banking/shared-utils";
 
 const API_URL = process.env.JSON_SERVER_URL || "http://localhost:3001/transactions";
 const USERS_URL = API_URL.replace("/transactions", "/users");
@@ -13,7 +20,7 @@ const IS_PRODUCTION = process.env.NODE_ENV === "production";
  */
 async function getUsers() {
   try {
-    const response = await fetch(USERS_URL);
+    const response = await fetch(USERS_URL, { cache: "no-store" });
     if (!response.ok) return [];
     return await response.json();
   } catch (error) {
@@ -54,26 +61,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(401).json({ error: "Email ou senha inválidos" });
     }
 
-    // Cria cookies de sessão
-    const sessionCookie = serialize("session", email, {
+    const token = await signAuthToken({
+      sub: user.email,
+      email: user.email,
+      name: user.firstName,
+    });
+
+    const sessionCookie = serialize(getSessionCookieName(), token, {
       path: "/",
       httpOnly: true,
-      maxAge: COOKIE_MAX_AGE,
-      sameSite: "lax",
-      secure: IS_PRODUCTION,
+      maxAge: getSessionMaxAge(),
+      sameSite: getSessionSameSite(),
+      secure: shouldUseSecureCookies(),
     });
 
-    // Este cookie pode ser lido pelo cliente (para exibir nome na UI)
-    const userNameCookie = serialize("userName", user.firstName, {
-      path: "/",
-      httpOnly: false,
-      maxAge: COOKIE_MAX_AGE,
-      sameSite: "lax",
-      secure: IS_PRODUCTION,
-    });
-
-    // Define ambos os cookies no cabeçalho
-    res.setHeader("Set-Cookie", [sessionCookie, userNameCookie]);
+    res.setHeader("Set-Cookie", sessionCookie);
+    res.setHeader("Cache-Control", "no-store");
 
     // Retorna uma resposta limpa ao front
     return res.status(200).json({

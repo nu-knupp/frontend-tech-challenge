@@ -1,11 +1,19 @@
-import { GetBalanceRepository, GetBalanceUseCase } from '@banking/shared-services';
+import { GetBalanceRepository } from '@banking/shared-services';
 import { NextApiRequest, NextApiResponse } from 'next';
+import {
+  getSessionCookieName,
+  verifyAuthToken,
+} from '@banking/shared-utils';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // Verificar autenticação
-  const session = req.cookies.session;
-  if (!session) {
+  const token = req.cookies[getSessionCookieName()];
+  if (!token) {
     return res.status(401).json({ error: 'Não autorizado' });
+  }
+  const session = await verifyAuthToken(token);
+  if (!session) {
+    return res.status(401).json({ error: 'Sessão inválida' });
   }
 
   if (req.method === 'GET') {
@@ -18,7 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
     
     const userTransactions = result.filter(
-      (transaction: any) => transaction.userEmail === session
+      (transaction: any) => transaction.userEmail === session.email
     );
     
     // Calcular balance apenas das transações do usuário
