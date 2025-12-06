@@ -31,7 +31,6 @@ services:
       - API_URL=http://json-server:3001
       - JSON_SERVER_URL=http://json-server:3001/transactions
       - DASHBOARD_INTERNAL_URL=http://dashboard:3002
-      - SESSION_COOKIE_SECURE=false
     depends_on:
       json-server:
         condition: service_healthy
@@ -74,9 +73,11 @@ services:
     image: nginx:alpine
     ports:
       - "80:80"
+      - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx/conf.d:/etc/nginx/conf.d
+      - ./nginx/certs:/etc/nginx/certs:ro
     depends_on:
       banking:
         condition: service_healthy

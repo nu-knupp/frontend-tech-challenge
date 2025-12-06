@@ -716,6 +716,78 @@ Se o arquivo `server.json` não existir na pasta `src/pages/api/db/`, ele será 
 }
 ```
 
+### 🐳 Executar com Docker Compose (Ambiente Local)
+
+Para subir **toda a stack** (json-server, banking, dashboard e Nginx) usando Docker:
+
+1. Copie o arquivo de exemplo de variáveis de ambiente:
+
+   ```bash
+   cp env.example .env
+   ```
+
+2. Suba todos os serviços com o Docker Compose (na raiz do projeto):
+
+   ```bash
+   docker compose up --build
+   ```
+
+   Isso inicia os serviços:
+
+   - `json-server` em `http://localhost:3001`
+   - `banking` em `http://localhost:3000`
+   - `dashboard` em `http://localhost:3002`
+   - `nginx` como proxy reverso em `http://localhost`
+
+3. Acesse a aplicação via Nginx (entrada única):
+
+   - Aplicação (shell + dashboard): `http://localhost`
+   - Rotas principais:
+     - `/` → Home (banking)
+     - `/login` → Autenticação
+     - `/transactions` → Dashboard de transações (proxiado para o app dashboard)
+     - `/analytics` → Página de analytics (dashboard)
+
+> **Importante:**
+>
+> - O ambiente em Docker está configurado para aceitar **HTTP e HTTPS**.
+> - Como há um redirect automático de `http://` para `https://`, é **obrigatório** gerar o certificado (mesmo que autoassinado) para o container `nginx` subir corretamente.
+> - Se você quiser rodar **apenas em HTTP**, remova/comente o bloco de HTTPS no `nginx.conf` e a porta `443` no `docker-compose.yml`.
+> - Os healthchecks podem levar alguns segundos na primeira subida até todos os serviços serem marcados como `healthy`.
+> - O fluxo de autenticação exige login antes de acessar `/transactions` e `/analytics`.
+
+#### 🔐 HTTPS com certificado autoassinado (opcional)
+
+Se você quiser testar o ambiente localmente com **HTTPS**, é possível usar um certificado **autoassinado**:
+
+1. Gere o certificado na pasta `nginx/certs` (na raiz do projeto):
+
+   ```bash
+   mkdir -p nginx/certs
+   openssl req -x509 -nodes -days 365 \
+     -newkey rsa:2048 \
+     -keyout nginx/certs/selfsigned.key \
+     -out nginx/certs/selfsigned.crt \
+     -subj "/CN=localhost"
+   ```
+
+2. Suba os serviços com Docker Compose (já configurado para montar os certificados e expor a porta 443):
+
+   ```bash
+   docker compose up --build
+   ```
+
+3. Acesse a aplicação em HTTPS:
+
+   - `https://localhost/`
+
+> ⚠️ **Aviso:**
+>
+> - Como o certificado é autoassinado, o navegador exibirá um aviso de segurança. Para uso local, basta aceitar o risco e prosseguir.
+> - Se os arquivos `nginx/certs/selfsigned.crt` e `nginx/certs/selfsigned.key` não existirem, o serviço `nginx` não conseguirá iniciar.
+> - Os certificados autoassinados versionados neste repositório existem **apenas** para facilitar a avaliação acadêmica e **não devem ser reutilizados em nenhum ambiente de produção**.
+> - Em produção, utilize um certificado emitido por uma autoridade confiável (por exemplo, Let's Encrypt) em vez de autoassinado.
+
 ---
 
 ## 🗂️ Estrutura do Projeto

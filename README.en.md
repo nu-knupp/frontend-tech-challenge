@@ -227,6 +227,78 @@ docker-compose up --build
 docker-compose up -d
 ```
 
+#### Local environment with docker-compose
+
+To run the **entire stack** (json-server, banking, dashboard and Nginx) locally with Docker:
+
+1. Copy the example environment file:
+
+   ```bash
+   cp env.example .env
+   ```
+
+2. Build and start all services from the project root:
+
+   ```bash
+   docker compose up --build
+   ```
+
+   This will start:
+
+   - `json-server` at `http://localhost:3001`
+   - `banking` at `http://localhost:3000`
+   - `dashboard` at `http://localhost:3002`
+   - `nginx` reverse proxy at `http://localhost`
+
+3. Access the application through Nginx (single entry point):
+
+   - Main URL: `http://localhost`
+   - Key routes:
+     - `/` → Home (banking shell)
+     - `/login` → Authentication
+     - `/transactions` → Transactions dashboard (proxied to dashboard app)
+     - `/analytics` → Analytics page (dashboard)
+
+> **Notes:**
+>
+> - The Docker environment is configured to support both **HTTP and HTTPS**.
+> - Because there is an automatic redirect from `http://` to `https://`, it is **mandatory** to generate the certificate (even if self-signed) for the `nginx` container to start correctly.
+> - If you prefer to run **HTTP-only**, remove/comment the HTTPS server block in `nginx.conf` and the `443` port mapping in `docker-compose.yml`.
+> - Healthchecks may take a few seconds during the first startup until all services are reported as `healthy`.
+> - The authentication flow requires login before accessing `/transactions` and `/analytics`.
+
+#### 🔐 HTTPS with self-signed certificate (optional)
+
+If you want to test the environment locally over **HTTPS**, you can use a **self-signed certificate**:
+
+1. Generate the certificate under `nginx/certs` at the project root:
+
+   ```bash
+   mkdir -p nginx/certs
+   openssl req -x509 -nodes -days 365 \
+     -newkey rsa:2048 \
+     -keyout nginx/certs/selfsigned.key \
+     -out nginx/certs/selfsigned.crt \
+     -subj "/CN=localhost"
+   ```
+
+2. Start the stack with Docker Compose (already configured to mount the certs and expose port 443):
+
+   ```bash
+   docker compose up --build
+   ```
+
+3. Access the application via HTTPS:
+
+   - `https://localhost/`
+
+> ⚠️ **Warning:**
+>
+> - Because the certificate is self-signed, the browser will show a security warning. For local development, you can safely bypass it.
+> - If the files `nginx/certs/selfsigned.crt` and `nginx/certs/selfsigned.key` do not exist, the `nginx` service will fail to start.
+> - The self-signed certificates versioned in this repository exist **only** to facilitate academic evaluation and **must not be reused in any production environment**.
+> - For production, always use a certificate issued by a trusted CA (e.g. Let's Encrypt) instead of a self-signed one.
+
 ### **Production with Docker**
 ```bash
 # Build for production
