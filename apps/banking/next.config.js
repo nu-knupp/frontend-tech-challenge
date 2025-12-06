@@ -1,4 +1,7 @@
 /** @type {import('next').NextConfig} */
+const isProd = process.env.NODE_ENV === 'production';
+const DASHBOARD_URL = isProd ? 'http://dashboard:3002' : 'http://localhost:3002';
+
 const nextConfig = {
   reactStrictMode: true,
   transpilePackages: [
@@ -16,37 +19,37 @@ const nextConfig = {
       // Proxy para páginas do dashboard
       {
         source: '/transactions/:path*',
-        destination: 'http://localhost:3002/transactions/:path*',
+        destination: `${DASHBOARD_URL}/transactions/:path*`,
       },
       {
         source: '/analytics/:path*', 
-        destination: 'http://localhost:3002/analytics/:path*',
+        destination: `${DASHBOARD_URL}/analytics/:path*`,
       },
       // Proxy para APIs do dashboard
       {
         source: '/api/transactions',
-        destination: 'http://localhost:3002/api/transactions',
+        destination: `${DASHBOARD_URL}/api/transactions`,
       },
       {
         source: '/api/transactions/:path*',
-        destination: 'http://localhost:3002/api/transactions/:path*',
+        destination: `${DASHBOARD_URL}/api/transactions/:path*`,
       },
       {
         source: '/api/balance',
-        destination: 'http://localhost:3002/api/balance',
+        destination: `${DASHBOARD_URL}/api/balance`,
       },
       {
         source: '/api/balance/:path*',
-        destination: 'http://localhost:3002/api/balance/:path*',
+        destination: `${DASHBOARD_URL}/api/balance/:path*`,
       },
       // Proxy para assets específicos do dashboard 
       {
         source: '/_next/static/chunks/app/transactions/:path*',
-        destination: 'http://localhost:3002/_next/static/chunks/app/transactions/:path*',
+        destination: `${DASHBOARD_URL}/_next/static/chunks/app/transactions/:path*`,
       },
       {
         source: '/_next/static/chunks/app/analytics/:path*',
-        destination: 'http://localhost:3002/_next/static/chunks/app/analytics/:path*',
+        destination: `${DASHBOARD_URL}/_next/static/chunks/app/analytics/:path*`,
       },
     ];
   },

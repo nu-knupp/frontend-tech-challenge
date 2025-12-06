@@ -12,8 +12,9 @@ services:
       - banking-network
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:3001/transactions"]
-      interval: 30s
-      timeout: 10s
+      interval: 5s
+      timeout: 5s
+      start_period: 5s
       retries: 3
 
   # Banking Microfrontend
@@ -23,10 +24,14 @@ services:
       target: banking-production
     ports:
       - "3000:3000"
+    env_file:
+      - .env
     environment:
       - NODE_ENV=production
       - API_URL=http://json-server:3001
       - JSON_SERVER_URL=http://json-server:3001/transactions
+      - DASHBOARD_INTERNAL_URL=http://dashboard:3002
+      - SESSION_COOKIE_SECURE=false
     depends_on:
       json-server:
         condition: service_healthy
@@ -34,8 +39,9 @@ services:
       - banking-network
     healthcheck:
       test: ["CMD", "pgrep", "-f", "next"]
-      interval: 30s
-      timeout: 10s
+      interval: 5s
+      timeout: 5s
+      start_period: 5s
       retries: 3
 
   # Dashboard Microfrontend
@@ -45,6 +51,8 @@ services:
       target: dashboard-production
     ports:
       - "3002:3002"
+    env_file:
+      - .env
     environment:
       - NODE_ENV=production
       - API_URL=http://json-server:3001
@@ -56,8 +64,9 @@ services:
       - banking-network
     healthcheck:
       test: ["CMD", "pgrep", "-f", "next"]
-      interval: 30s
-      timeout: 10s
+      interval: 5s
+      timeout: 5s
+      start_period: 5s
       retries: 3
 
   # Nginx Reverse Proxy
@@ -65,7 +74,6 @@ services:
     image: nginx:alpine
     ports:
       - "80:80"
-      - "443:443"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./nginx/conf.d:/etc/nginx/conf.d

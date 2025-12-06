@@ -37,7 +37,7 @@ if (fs.existsSync(serverFilePath)) {
   console.log("✅ server.json criado em:", serverFilePath);
 }
 
-// Lê ou cria users.json
+// Lê ou cria u
 let usersData = defaultUsersData;
 if (fs.existsSync(usersFilePath)) {
   try {
@@ -56,10 +56,23 @@ if (fs.existsSync(usersFilePath)) {
   console.log("✅ users.json criado em:", usersFilePath);
 }
 
-// Combina ambos em server.json para o JSON Server
+// Combina ambos em server.json para o JSON Server, preservando usuários existentes
+const existingUsers = Array.isArray(serverData.users) ? serverData.users : [];
+const extraUsers = Array.isArray(usersData) ? usersData : [];
+
+// Evita duplicar usuários (usa email ou id como chave)
+const seen = new Set();
+const mergedUsers = [...existingUsers, ...extraUsers].filter((user) => {
+  const key = user.email || user.id;
+  if (!key) return true;
+  if (seen.has(key)) return false;
+  seen.add(key);
+  return true;
+});
+
 const combinedData = {
   ...serverData,
-  users: usersData
+  users: mergedUsers
 };
 
 fs.writeFileSync(serverFilePath, JSON.stringify(combinedData, null, 2));

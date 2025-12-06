@@ -7,6 +7,9 @@ RUN npm install -g pnpm@10.14.0
 # Set working directory
 WORKDIR /app
 
+# Internal dashboard URL for production builds (Docker network)
+ENV DASHBOARD_INTERNAL_URL=http://dashboard:3002
+
 # Copy package files for dependency resolution
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY turbo.json ./
