@@ -682,6 +682,12 @@ Fase 1:
 Fase 2:
 [https://youtu.be/GrY2L5Kvg70](https://youtu.be/GrY2L5Kvg70)
 
+Fase 3:
+[https://drive.google.com/drive/folders/1fwTyUVD6nHj8XpFb482qQw4NKPo_MDUt?usp=drive_link](https://drive.google.com/drive/folders/1fwTyUVD6nHj8XpFb482qQw4NKPo_MDUt?usp=drive_link)
+
+Fase 4:
+[https://youtu.be/kOpPICyT4F4](https://youtu.be/kOpPICyT4F4)
+
 ---
 
 ## 🚀 Como executar o projeto
